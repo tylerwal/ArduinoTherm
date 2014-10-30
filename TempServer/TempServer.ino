@@ -2,16 +2,16 @@
 #include <Ethernet.h>
 #include <string.h>
 #include "DHT.h"
+#include "TimerOne.h"
 
 #define bufferMax 128
-#define MaxUnsignedLong 4294967295
-#define DhtUpdateInterval 3000
+#define DhtUpdateInterval 3000000
 
 DHT dht;
 float desiredTemp;
 float humidity;
 float temperature;
-unsigned long lastUpdateTime;
+String dhtStatus;
 
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 1, 177);
@@ -27,6 +27,9 @@ char param2[15];
 
 void setup()
 {
+	//test
+	//pinMode(13, OUTPUT);
+	
 	Ethernet.begin(mac, ip);
 	server.begin();
 	
@@ -35,10 +38,15 @@ void setup()
 	Serial.println(Ethernet.localIP());
 	
 	dht.setup(2); // data pin 2
+	
+	//Timer1.initialize(DhtUpdateInterval);
+	//Timer1.attachInterrupt(UpdateTempValues);
 }
 
 void loop()
 {
+	//test
+	//digitalWrite(13, LOW);
 	client = server.available();
 	if (client)
 	{
@@ -54,16 +62,26 @@ void WaitForRequest(EthernetClient client)
 {
 	bufferSize = 0;
 	
-	while (client.connected()) {
-		if (client.available()) {
+	while (client.connected()) 
+	{
+		if (client.available()) 
+		{
 			char c = client.read();
 			if (c == '\n')
-			break;
+			{
+				break;
+			}
 			else
-			if (bufferSize < bufferMax)
-			buffer[bufferSize++] = c;
-			else
-			break;
+			{
+				if (bufferSize < bufferMax)
+				{
+					buffer[bufferSize++] = c;
+				}
+				else
+				{
+					break;
+				}
+			}
 		}
 	}
 	
@@ -123,15 +141,22 @@ void PerformRequestedCommands()
 
 void UpdateTempValues()
 {
-	//unsigned long current = 
-	
-	humidity = dht.getHumidity();
-	temperature = dht.getTemperature();
+    Serial.println("update");
+	//dhtStatus = dht.getStatusString();
+	//humidity = dht.getHumidity();
+	//temperature = dht.getTemperature();
+	//test
+	//digitalWrite(13, HIGH);
+	//delay(100);
 }
 
 void GetTemp()
 {
 	PrintHttpHeader("HTTP/1.1 200 OK");
+	
+	dhtStatus = dht.getStatusString();
+	humidity = dht.getHumidity();
+	temperature = dht.getTemperature();
 	
 	if (strcmp(param1, "temp") == 0) 
 	{
@@ -143,12 +168,12 @@ void GetTemp()
 	}
 	else if (strcmp(param1, "status") == 0) 
 	{
-		client.print(dht.getStatusString());   
+		client.print(dhtStatus);   
 	}
 	else
 	{
 		client.print("Status: ");
-		client.print(dht.getStatusString());
+		client.print(dhtStatus);
 		client.println("");
 		client.print("Humidity: ");
 		client.print(humidity, 1);
