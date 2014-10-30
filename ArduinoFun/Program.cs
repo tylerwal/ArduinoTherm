@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO.Ports;
+using System.Net;
 
 namespace ArduinoFun
 {
@@ -8,7 +9,17 @@ namespace ArduinoFun
 		public static void Main(string[] args)
 		{
 			Program prog = new Program();
-			prog.ReadArduino();
+			//prog.ReadArduino();
+			prog.ReadServer();
+		}
+
+		private void ReadServer()
+		{
+			System.Net.WebClient client = new WebClient();
+			string allTemp = client.DownloadString(@"http://192.168.1.177/getTemp/");
+
+			Console.WriteLine(allTemp);
+			Console.ReadKey();
 		}
 
 		private void ReadArduino()

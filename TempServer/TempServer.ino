@@ -11,6 +11,7 @@ byte mac[] = {
 IPAddress ip(192, 168, 1, 177);
 
 EthernetServer server(80); // Port 80 is http.
+EthernetClient client;
 
 #define bufferMax 128
 int bufferSize;
@@ -34,7 +35,8 @@ void setup()
 
 void loop()
 {
- EthernetClient client = server.available();
+ //EthernetClient 
+ client = server.available();
  if (client)
  {
    WaitForRequest(client);
@@ -110,28 +112,30 @@ void GetTemp()
   float humidity = dht.getHumidity();
   float temperature = dht.getTemperature();
   
+  PrintHttpHeader();
+  
   if (strcmp(param1, "temp") == 0) 
   {
-    server.print(dht.toFahrenheit(temperature), 1);
+    client.print(dht.toFahrenheit(temperature), 1);
   }
   else if (strcmp(param1, "humidity") == 0) 
   {
-    server.print(humidity, 1);    
+    client.print(humidity, 1);    
   }
   else if (strcmp(param1, "status") == 0) 
   {
-    server.print(dht.getStatusString());   
+    client.print(dht.getStatusString());   
   }
   else
   {
-    server.print("Status: ");
-    server.print(dht.getStatusString());
-    server.println("");
-    server.print("Humidity: ");
-    server.print(humidity, 1);
-    server.println("");
-    server.print("Temperature: ");
-    server.println(dht.toFahrenheit(temperature), 1);
+    client.print("Status: ");
+    client.print(dht.getStatusString());
+    client.println("");
+    client.print("Humidity: ");
+    client.print(humidity, 1);
+    client.println("");
+    client.print("Temperature: ");
+    client.println(dht.toFahrenheit(temperature), 1);
   }
 }
 
@@ -147,4 +151,12 @@ void PrintNumber(char* label, int number)
  Serial.print(label);
  Serial.print("=");
  Serial.println(number, DEC);
+}
+
+void PrintHttpHeader()
+{
+  client.println("HTTP/1.1 200 OK");
+  client.println("Content-Type: text/html");
+  client.println("Connection: close");  // the connection will be closed after completion of the response
+  client.println(); 
 }
