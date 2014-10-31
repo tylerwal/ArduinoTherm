@@ -106,7 +106,7 @@ void ParseReceivedRequest()
 	slash2 = strstr(slash1, "/") + 1; // second slash
 	slash3 = strstr(slash2, "/") + 1; // third slash
 	space2 = strstr(slash2, " ") + 1; // space after second slash (in case there is no third slash)
-
+	
 	if (slash3 > space2) 
 	{
 		slash3=slash2;
