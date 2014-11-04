@@ -10,9 +10,9 @@ EthernetClient client;
 
 char request[maxRequestLength];
 
-char method[6];
-char command[15];
-char parameter[15];
+char method[30];
+char command[30];
+char parameter[30];
 
 void setup()
 {
@@ -65,36 +65,50 @@ void WaitForRequest(EthernetClient client)
 	}
 }
 
+// Received request contains "METHOD /command/parameter HTTP/1.1".  Break it up.
 void ParseReceivedRequest()
 {
 	Serial.println(request);
 
-	//Received request contains "METHOD /command/parameter HTTP/1.1".  Break it up.
-	char* method;
+	// command/parameter HTTP/1.1
 	char* commandParameterSubstring;
+	int commandParameterSubstringLength;
+
+	// parameter HTTP/1.1
 	char* parameterSubstring;
+	int parameterSubstringLength;
+	
 	char* slash3;
 	char* space2;
 
-	commandParameterSubstring = strstr(request, "/") + 1; // everything after first slash
-	parameterSubstring = strstr(commandParameterSubstring, "/") + 1; // everything after second slash
+	// everything after first slash
+	commandParameterSubstring = strstr(request, "/") + 1; 
+	commandParameterSubstringLength = strlen(commandParameterSubstring);
+	PrintString("command paramter substring", commandParameterSubstring);
+ 
+	// everything after second slash
+	parameterSubstring = strstr(commandParameterSubstring, "/") + 1;
+	parameterSubstringLength = strlen(parameterSubstring);
+	PrintString("parameter substring", parameterSubstring);
 
-	PrintString("commandParameterSubstring",commandParameterSubstring);
-	PrintString("parameterSubstring",parameterSubstring);
-	// PrintString("slash3",slash3);
-	// PrintString("space2",space2);
+	// get the http version at the end for removal
+	//char* httpVersion = strstr(parameterSubstring, " ");
+	//int httpVersionLength = strlen(httpVersion);
+	
+	char* httpVersion = strrchr(request, ' ');
+	int httpVersionLength = strlen(httpVersion);
 
 	// strncpy does not automatically add terminating zero, but strncat does! So start with blank string and concatenate.
 	method[0] = 0;
 	command[0] = 0;
 	parameter[0] = 0;
-	//strncat(method, request, commandParameterSubstring-1);
-	strncat(command, commandParameterSubstring, parameterSubstring-commandParameterSubstring-1);
-	strncat(parameter, parameterSubstring, slash3-parameterSubstring-1);
+	strncat(method, request, strlen(request) - commandParameterSubstringLength - 2); // looks good
+	strncat(command, commandParameterSubstring, commandParameterSubstringLength - parameterSubstringLength  - 1); // looks good
+	strncat(parameter, parameterSubstring, parameterSubstringLength - httpVersionLength); // looks good
 
-	Serial.print(parameterSubstring-commandParameterSubstring-1);
-	PrintString("command",command);
-	PrintString("parameter",parameter);
+	PrintString("Method", method);
+	PrintString("Command", command);
+	PrintString("Parameter", parameter);
 }
 
 /* void PerformRequestedCommand()
@@ -116,6 +130,13 @@ void ParseReceivedRequest()
 void PrintString(char* label, char* str)
 {
 	Serial.print(label);
-	Serial.print("=");
+	Serial.print(" = ");
 	Serial.println(str);
+}
+
+void PrintNumber(char* label, int num)
+{
+	Serial.print(label);
+	Serial.print(" = ");
+	Serial.println(num);
 }
