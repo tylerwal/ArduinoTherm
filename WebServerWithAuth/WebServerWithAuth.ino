@@ -9,7 +9,6 @@ EthernetServer server(80);
 EthernetClient client;
 
 char request[maxRequestLength];
-
 char* command;
 char* parameter;
 
@@ -64,22 +63,21 @@ void WaitForRequest(EthernetClient client)
 	}
 }
 
-// Received request contains "METHOD /command/parameter HTTP/1.1"
+// Parses the request into the HTTP method (request), command, and paramter variables
+// Received request templace: "METHOD /command/parameter HTTP/1.1"
 void ParseReceivedRequest()
 {
 	// chop off HTTP version
 	request[strrchr(request, ' ') - request] = '\0';
-	PrintString("new request", request);
-	
-	int firstSlashPosition = strstr(request, "/") - request;
-	request[firstSlashPosition - 1] = '\0';
-	char* commandParameterSubstring = &request[firstSlashPosition + 1];
-	
-	int secondSlashPosition = strstr(commandParameterSubstring, "/") - commandParameterSubstring;
-	commandParameterSubstring[secondSlashPosition] = '\0';
 
-	command = commandParameterSubstring;
-	parameter = &commandParameterSubstring[secondSlashPosition + 1];
+	int firstSlashPosition = strstr(request, "/") - request;
+	request[firstSlashPosition - 1] = '\0'; // place a null character in 1 index in front of slash
+	command = &request[firstSlashPosition + 1]; // set command equal to the reference of 1 character after the slash
+	
+	int secondSlashPosition = strstr(command, "/") - command;
+	command[secondSlashPosition] = '\0'; // place a null character at slash location
+
+	parameter = &command[secondSlashPosition + 1]; // set parameter equal to the reference of 1 character after the slash
 }
 
 void PerformRequestedCommand()
