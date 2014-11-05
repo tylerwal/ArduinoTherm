@@ -10,9 +10,8 @@ EthernetClient client;
 
 char request[maxRequestLength];
 
-char method[30];
-char command[30];
-char parameter[30];
+char* command;
+char* parameter;
 
 void setup()
 {
@@ -31,7 +30,7 @@ void loop()
 	{
 		WaitForRequest(client);
 		ParseReceivedRequest();
-		//PerformRequestedCommand();
+		PerformRequestedCommand();
 
 		client.stop();
 	}
@@ -78,35 +77,18 @@ void ParseReceivedRequest()
 	
 	int secondSlashPosition = strstr(commandParameterSubstring, "/") - commandParameterSubstring;
 	commandParameterSubstring[secondSlashPosition] = '\0';
-	char* parameterSubstring = &commandParameterSubstring[secondSlashPosition + 1];
-/*
-	// parameter
-	// "METHOD /command/parameter HTTP/1.1" -> "METHOD /command/parameter"
-	char* parameterSubstring;
-	int parameterSubstringLength;
- 
-	// everything after second slash
-	parameterSubstring = strstr(commandParameterSubstring, "/") + 1;
-	parameterSubstringLength = strlen(parameterSubstring);
-	PrintString("parameter substring", parameterSubstring);
-	
-	// strncpy does not automatically add terminating zero, but strncat does! So start with blank string and concatenate.
-	method[0] = 0;
-	command[0] = 0;
-	parameter[0] = 0;
-	strncat(method, request, strlen(request) - commandParameterSubstringLength - 2); // looks good
-	strncat(command, commandParameterSubstring, commandParameterSubstringLength - parameterSubstringLength  - 1); // looks good
-	strncat(parameter, parameterSubstring, parameterSubstringLength - httpVersionLength); // looks good
 
-	PrintString("Method", method);
-	PrintString("Command", command);
-	PrintString("Parameter", parameter);
-*/
+	command = commandParameterSubstring;
+	parameter = &commandParameterSubstring[secondSlashPosition + 1];
 }
 
-/* void PerformRequestedCommand()
+void PerformRequestedCommand()
 {
-	if ( strcmp(command,"getTemp") == 0 )
+	PrintString("Method", request);
+	PrintString("Command", command);
+	PrintString("Parameter", parameter);
+	
+/* 	if ( strcmp(command,"getTemp") == 0 )
 	{
 		GetTemp();
 	}
@@ -117,8 +99,8 @@ void ParseReceivedRequest()
 	else
 	{
 		PrintHttpHeader("HTTP/1.1 404 Not found");
-	}
-} */
+	} */
+}
 
 void PrintString(char* label, char* str)
 {
