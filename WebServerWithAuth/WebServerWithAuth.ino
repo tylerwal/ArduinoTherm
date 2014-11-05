@@ -68,34 +68,17 @@ void WaitForRequest(EthernetClient client)
 // Received request contains "METHOD /command/parameter HTTP/1.1"
 void ParseReceivedRequest()
 {
-	PrintString("original request", request);
-
 	// chop off HTTP version
-	// "METHOD /command/parameter HTTP/1.1" -> "METHOD /command/parameter"
-	// char* httpVersion = strrchr(request, ' ');
 	request[strrchr(request, ' ') - request] = '\0';
 	PrintString("new request", request);
-
-	// "METHOD /command/parameter" -> "METHOD /command/parameter"
-	// char* commandParameterSubstring = strstr(request, "/") + 1; 
-	// int commandParameterSubstringLength = strlen(commandParameterSubstring);
-	// PrintString("command paramter substring", commandParameterSubstring);
-	// PrintNumber("command parameter length", commandParameterSubstringLength);
 	
 	int firstSlashPosition = strstr(request, "/") - request;
-	PrintNumber("first slash position", firstSlashPosition);
 	request[firstSlashPosition - 1] = '\0';
-	PrintString("new request", request);
-	PrintNumber("new request length", strlen(request));
 	char* commandParameterSubstring = &request[firstSlashPosition + 1];
-	PrintString("command parameter substring", commandParameterSubstring);
 	
 	int secondSlashPosition = strstr(commandParameterSubstring, "/") - commandParameterSubstring;
-	PrintNumber("second slash position", secondSlashPosition);
 	commandParameterSubstring[secondSlashPosition] = '\0';
-	PrintString("command substring", commandParameterSubstring);
 	char* parameterSubstring = &commandParameterSubstring[secondSlashPosition + 1];
-	PrintString("parameter substring", parameterSubstring);
 /*
 	// parameter
 	// "METHOD /command/parameter HTTP/1.1" -> "METHOD /command/parameter"
