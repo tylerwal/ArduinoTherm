@@ -81,35 +81,22 @@ void ParseReceivedRequest()
 }
 
 void PerformRequestedCommand()
-{
-	PrintString("Method", request);
-	PrintString("Command", command);
-	PrintString("Parameter", parameter);
-	
-/* 	if ( strcmp(command,"getTemp") == 0 )
+{	
+	if (CompareStrings(request, "GET"))
 	{
-		GetTemp();
 	}
-	else if ( strcmp(command,"setTemp") == 0 )
+	else if (CompareStrings(request, "PUT"))
 	{
-		SetTemp();
 	}
-	else
+	else if (CompareStrings(request, "POST"))
 	{
-		PrintHttpHeader("HTTP/1.1 404 Not found");
-	} */
+	}
+	else if (CompareStrings(request, "DELETE"))
+	{
+	}
 }
 
-void PrintString(char* label, char* str)
+bool CompareStrings(char* one, char* two)
 {
-	Serial.print(label);
-	Serial.print("=");
-	Serial.println(str);
-}
-
-void PrintNumber(char* label, int num)
-{
-	Serial.print(label);
-	Serial.print("=");
-	Serial.println(num);
+	return strcmp(one, two) == 0;
 }
