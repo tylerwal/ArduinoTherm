@@ -94,9 +94,22 @@ void PerformRequestedCommand()
 	else if (CompareStrings(request, "DELETE"))
 	{
 	}
+	PrintHttpHeader("200 OK");
+	client.println(request);
+	client.println(command);
+	client.println(parameter);
 }
 
 bool CompareStrings(char* one, char* two)
 {
 	return strcmp(one, two) == 0;
+}
+
+void PrintHttpHeader(String code)
+{
+	client.print("HTTP/1.1 ");
+	client.println(code);
+	client.println("Content-Type: text/html");
+	client.println("Connection: close");  // the connection will be closed after completion of the response
+	client.println(); 
 }
