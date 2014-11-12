@@ -8,6 +8,8 @@ IPAddress ip(192, 168, 1, 177);
 EthernetServer server(80);
 EthernetClient client;
 
+typedef void (*actionMethod)(char*, char*);
+
 char request[maxRequestLength];
 char* command;
 char* parameter;
@@ -82,11 +84,17 @@ void ParseReceivedRequest()
 
 void PerformRequestedCommand()
 {	
+	actionMethod action;
+
+	PrintHttpHeader("200 OK");
+	
 	if (CompareStrings(request, "GET"))
 	{
+		action = &Get;
 	}
 	else if (CompareStrings(request, "PUT"))
 	{
+		action = &Put;
 	}
 	else if (CompareStrings(request, "POST"))
 	{
@@ -94,10 +102,22 @@ void PerformRequestedCommand()
 	else if (CompareStrings(request, "DELETE"))
 	{
 	}
-	PrintHttpHeader("200 OK");
-	client.println(request);
-	client.println(command);
-	client.println(parameter);
+	
+	action(command, parameter);
+}
+
+void Get(char* com, char* par)
+{
+	client.println("Get!!");
+	client.println(com);
+	client.println(par);
+}
+
+void Put(char* com, char* par)
+{
+	client.println("Put??");
+	client.println(com);
+	client.println(par);
 }
 
 bool CompareStrings(char* one, char* two)
