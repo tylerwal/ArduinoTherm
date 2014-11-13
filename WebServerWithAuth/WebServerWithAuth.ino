@@ -104,6 +104,7 @@ void PerformRequestedCommand()
 	}
 	
 	action(command, parameter);
+	client.println(freeRam());
 }
 
 void Get(char* com, char* par)
@@ -132,4 +133,12 @@ void PrintHttpHeader(String code)
 	client.println("Content-Type: text/html");
 	client.println("Connection: close");  // the connection will be closed after completion of the response
 	client.println(); 
+}
+
+// code @ https://learn.adafruit.com/memories-of-an-arduino/measuring-free-memory
+int freeRam ()
+{
+	extern int __heap_start, *__brkval;
+	int v;
+	return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
 }
