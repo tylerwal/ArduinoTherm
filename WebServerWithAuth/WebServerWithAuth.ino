@@ -109,16 +109,16 @@ void PerformRequestedCommand()
 
 void Get(char* com, char* par)
 {
-	client.println("Get!!");
+/* 	client.println("Get!!");
 	client.println(com);
-	client.println(par);
+	client.println(par); */
 }
 
 void Put(char* com, char* par)
 {
-	client.println("Put??");
+/* 	client.println("Put??");
 	client.println(com);
-	client.println(par);
+	client.println(par); */
 }
 
 bool CompareStrings(char* one, char* two)
