@@ -7,8 +7,8 @@
     <ProjectGuid>{FD70C0CD-D48A-451E-8D9C-5AAAB2789C4E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ArduinoFun</RootNamespace>
-    <AssemblyName>ArduinoFun</AssemblyName>
+    <RootNamespace>ArduinoThermAccessor</RootNamespace>
+    <AssemblyName>ArduinoThermAccessor</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
