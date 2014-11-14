@@ -10,9 +10,16 @@ EthernetClient client;
 
 typedef void (*actionMethod)(char*, char*);
 
-char request[maxRequestLength];
+//char* request; //[maxRequestLength];
 char* command;
 char* parameter;
+
+class A
+{
+  public:
+   int x;
+   virtual void f() { x=1; }
+};
 
 void setup()
 {
@@ -29,18 +36,23 @@ void loop()
 	client = server.available();
 	if (client)
 	{
-		WaitForRequest(client);
-		ParseReceivedRequest();
-		PerformRequestedCommand();
-
+		char* request;
+	
+		request = WaitForRequest(client);
+                Serial.println(request);
+		//ParseReceivedRequest(request);
+		//PerformRequestedCommand();
+                PrintHttpHeader("200 OK");
+                client.println("Test");
 		client.stop();
 	}
 }
 
-void WaitForRequest(EthernetClient client)
+char* WaitForRequest(EthernetClient client)
 {
 	int requestLength = 0;
-
+	char* request;
+	
 	while (client.connected())
 	{
 		if (client.available())
@@ -63,11 +75,13 @@ void WaitForRequest(EthernetClient client)
 			}
 		}
 	}
+	
+	return request;
 }
 
 // Parses the request into the HTTP method (request), command, and paramter variables
 // Received request templace: "METHOD /command/parameter HTTP/1.1"
-void ParseReceivedRequest()
+void ParseReceivedRequest(char* request)
 {
 	// chop off HTTP version
 	request[strrchr(request, ' ') - request] = '\0';
@@ -82,6 +96,7 @@ void ParseReceivedRequest()
 	parameter = &command[secondSlashPosition + 1]; // set parameter equal to the reference of 1 character after the slash
 }
 
+/*
 void PerformRequestedCommand()
 {	
 	actionMethod action;
@@ -106,6 +121,7 @@ void PerformRequestedCommand()
 	action(command, parameter);
 	client.println(freeRam());
 }
+*/
 
 void Get(char* com, char* par)
 {
