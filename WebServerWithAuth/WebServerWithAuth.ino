@@ -58,6 +58,7 @@ char* WaitForRequest(EthernetClient client)
 		if (client.available())
 		{
 			char c = client.read();
+                        Serial.print(c);
 			if (c == '\n')
 			{
 				break;
@@ -66,7 +67,7 @@ char* WaitForRequest(EthernetClient client)
 			{
 				if (requestLength < maxRequestLength)
 				{
-					request[requestLength++] = c;
+                                        request[requestLength++] = c;
 				}
 				else
 				{
@@ -75,6 +76,8 @@ char* WaitForRequest(EthernetClient client)
 			}
 		}
 	}
+
+        request[requestLength++] = '\0';
 	
 	return request;
 }
