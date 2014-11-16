@@ -25,8 +25,8 @@ void setup()
 {
 	Ethernet.begin(mac, ip);
 	server.begin();
-
 	Serial.begin(9600);
+
 	Serial.print("server is at ");
 	Serial.println(Ethernet.localIP());
 }
@@ -36,14 +36,22 @@ void loop()
 	client = server.available();
 	if (client)
 	{
-		char* request;
-	
-		request = WaitForRequest(client);
-                Serial.println(request);
+		char* request = WaitForRequest(client);
+		
+		Serial.println("Request in main loop:");
+        Serial.println(request);
+		Serial.println(":EndRequest");
 		//ParseReceivedRequest(request);
 		//PerformRequestedCommand();
-                PrintHttpHeader("200 OK");
-                client.println("Test");
+		
+		client.println("Command:");
+		client.println(command);
+		client.println("Parameter:");
+		client.println(parameter);
+		client.println(":EndParameter");
+		
+        PrintHttpHeader("200 OK");
+        client.println(request);
 		client.stop();
 	}
 }
@@ -51,14 +59,14 @@ void loop()
 char* WaitForRequest(EthernetClient client)
 {
 	int requestLength = 0;
-	char* request;
+	char request[maxRequestLength];
 	
 	while (client.connected())
 	{
 		if (client.available())
 		{
 			char c = client.read();
-                        Serial.print(c);
+
 			if (c == '\n')
 			{
 				break;
@@ -67,7 +75,7 @@ char* WaitForRequest(EthernetClient client)
 			{
 				if (requestLength < maxRequestLength)
 				{
-                                        request[requestLength++] = c;
+                    request[requestLength++] = c;
 				}
 				else
 				{
@@ -77,9 +85,17 @@ char* WaitForRequest(EthernetClient client)
 		}
 	}
 
-        request[requestLength++] = '\0';
+	Serial.println("Request before adding null:");
+	Serial.println(request);
+	Serial.println(":EndRequest");
 	
-	return request;
+    request[requestLength++] = '\0';
+	
+	Serial.println("Request after adding null:");
+	Serial.println(request);
+	Serial.println(":EndRequest");
+	
+	return &request[0];
 }
 
 // Parses the request into the HTTP method (request), command, and paramter variables
