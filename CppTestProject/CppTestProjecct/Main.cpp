@@ -13,7 +13,7 @@ public:
 	char* parameter;
 };
 
-ParsedRequest& ParseReceivedRequest(char*, ParsedRequest);
+ParsedRequest& ParseReceivedRequest(char*, ParsedRequest&);
 
 int main()
 {
@@ -60,7 +60,7 @@ char* WaitForRequest()
 	return &request[0];
 }
 
-ParsedRequest& ParseReceivedRequest(char* request, ParsedRequest parsedRequest)
+ParsedRequest& ParseReceivedRequest(char* request, ParsedRequest& parsedRequest)
 {
 	//ParsedRequest parsedRequest;
 
