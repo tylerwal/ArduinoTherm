@@ -3,7 +3,7 @@
 
 char* sentString = "GET /test/test2/ HTTP/1.1\nSome other stuff\nmore stuff\nEnd";
 
-char* WaitForRequest();
+void GetRequest(char *);
 
 class ParsedRequest
 {
@@ -20,10 +20,11 @@ int main()
 	std::cout << "Hello World!";
 	std::cout << "\n";
 	//ParsedRequest* parsedRequest;
-	char* request = WaitForRequest();
+	char request[maxRequestLength];
+	GetRequest(request);
 	
 	std::cout << "\n";
-	std::cout << "In main:";
+	std::cout << "In main:\n";
 	std::cout << request;
 	std::cout << "\n";
 	std::cout << typeid(request).name();
@@ -36,10 +37,12 @@ int main()
 	system("pause");
 }
 
-char* WaitForRequest()
+void GetRequest(char *request)
 {
 	int requestLength = 0;
-	char request[maxRequestLength];
+	//char request[maxRequestLength];
+	//char* request = "\0";
+//	request[0] = '\0';
 
 	for ( int i = 0; i < strlen(sentString); i++)
 	{
@@ -53,6 +56,11 @@ char* WaitForRequest()
 		{
 			if (requestLength < maxRequestLength)
 			{
+				//char cc[2];
+				//cc[0] = c;
+				//cc[1] = '\0';
+
+				//strcat(request, cc);
 				request[requestLength++] = c;
 			}
 			else
@@ -62,16 +70,19 @@ char* WaitForRequest()
 		}
 	}
 
+	// null terminate the char array
 	request[requestLength++] = '\0';
+	
+	//char* request = "GET /test/test2/ HTTP/1.1";
 
 	std::cout << "\n";
-	std::cout << "In Get Request:";
+	std::cout << "In Get Request:\n";
 	std::cout << request;
 	std::cout << "\n";
 	std::cout << typeid(request).name();
 	std::cout << "\n";
 
-	return &request[0];
+	//return request; // &request[0];
 }
 
 ParsedRequest* ParseReceivedRequest(char* request)
@@ -79,7 +90,7 @@ ParsedRequest* ParseReceivedRequest(char* request)
 	ParsedRequest parsedRequest;
 
 	std::cout << "\n";
-	std::cout << "In Parse:";
+	std::cout << "In Parse:\n";
 	std::cout << request;
 	std::cout << "\n";
 	std::cout << typeid(request).name();
