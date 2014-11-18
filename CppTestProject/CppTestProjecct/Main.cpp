@@ -13,16 +13,25 @@ public:
 	char* parameter;
 };
 
-ParsedRequest& ParseReceivedRequest(char*, ParsedRequest&);
+ParsedRequest* ParseReceivedRequest(char*);
 
 int main()
 {
 	std::cout << "Hello World!";
 	std::cout << "\n";
-	ParsedRequest parsedRequest;
+	//ParsedRequest* parsedRequest;
 	char* request = WaitForRequest();
-	parsedRequest = ParseReceivedRequest(request, parsedRequest);
-	//std::cout << request;
+	
+	std::cout << "\n";
+	std::cout << "In main:";
+	std::cout << request;
+	std::cout << "\n";
+	std::cout << typeid(request).name();
+	std::cout << "\n";
+
+	//parsedRequest = 
+	ParseReceivedRequest(request);
+	//
 	std::cout << "\n";
 	system("pause");
 }
@@ -55,15 +64,28 @@ char* WaitForRequest()
 
 	request[requestLength++] = '\0';
 
+	std::cout << "\n";
+	std::cout << "In Get Request:";
 	std::cout << request;
+	std::cout << "\n";
+	std::cout << typeid(request).name();
+	std::cout << "\n";
 
 	return &request[0];
 }
 
-ParsedRequest& ParseReceivedRequest(char* request, ParsedRequest& parsedRequest)
+ParsedRequest* ParseReceivedRequest(char* request)
 {
-	//ParsedRequest parsedRequest;
+	ParsedRequest parsedRequest;
 
+	std::cout << "\n";
+	std::cout << "In Parse:";
+	std::cout << request;
+	std::cout << "\n";
+	std::cout << typeid(request).name();
+	std::cout << "\n";
+
+	/*
 	// chop off HTTP version
 	request[strrchr(request, ' ') - request] = '\0';
 
@@ -75,6 +97,7 @@ ParsedRequest& ParseReceivedRequest(char* request, ParsedRequest& parsedRequest)
 	parsedRequest.command[secondSlashPosition] = '\0'; // place a null character at slash location
 
 	parsedRequest.parameter = &parsedRequest.command[secondSlashPosition + 1]; // set parameter equal to the reference of 1 character after the slash
+	*/
 
-	return parsedRequest;
+	return new ParsedRequest;
 }
