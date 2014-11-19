@@ -17,9 +17,6 @@ ParsedRequest* ParseReceivedRequest(char*);
 
 int main()
 {
-	std::cout << "Hello World!";
-	std::cout << "\n";
-	//ParsedRequest* parsedRequest;
 	char request[maxRequestLength];
 	GetRequest(request);
 	
@@ -40,9 +37,6 @@ int main()
 void GetRequest(char *request)
 {
 	int requestLength = 0;
-	//char request[maxRequestLength];
-	//char* request = "\0";
-//	request[0] = '\0';
 
 	for ( int i = 0; i < strlen(sentString); i++)
 	{
@@ -56,11 +50,6 @@ void GetRequest(char *request)
 		{
 			if (requestLength < maxRequestLength)
 			{
-				//char cc[2];
-				//cc[0] = c;
-				//cc[1] = '\0';
-
-				//strcat(request, cc);
 				request[requestLength++] = c;
 			}
 			else
@@ -70,19 +59,7 @@ void GetRequest(char *request)
 		}
 	}
 
-	// null terminate the char array
 	request[requestLength++] = '\0';
-	
-	//char* request = "GET /test/test2/ HTTP/1.1";
-
-	std::cout << "\n";
-	std::cout << "In Get Request:\n";
-	std::cout << request;
-	std::cout << "\n";
-	std::cout << typeid(request).name();
-	std::cout << "\n";
-
-	//return request; // &request[0];
 }
 
 ParsedRequest* ParseReceivedRequest(char* request)
