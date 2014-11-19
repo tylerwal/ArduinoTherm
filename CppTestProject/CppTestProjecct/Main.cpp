@@ -70,17 +70,19 @@ void GetHttpRequest(char *buffer)
 // Received buffer templace: "METHOD /command/parameter HTTP/1.1"
 void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 {
-	parsedRequest.httpMethod = buffer;
-
 	// chop off HTTP version
 	buffer[strrchr(buffer, ' ') - buffer] = '\0';
+	parsedRequest.httpMethod = buffer;
 
 	int firstSlashPosition = strstr(buffer, "/") - buffer;
-	buffer[firstSlashPosition - 1] = '\0'; // place a null character in 1 index in front of slash
-	parsedRequest.command = &buffer[firstSlashPosition + 1]; // set command equal to the reference of 1 character after the slash
+	// place a null character in 1 index in front of slash
+	buffer[firstSlashPosition - 1] = '\0';
+	// set command equal to the reference of 1 character after the slash
+	parsedRequest.command = &buffer[firstSlashPosition + 1];
 
 	int secondSlashPosition = strstr(parsedRequest.command, "/") - parsedRequest.command;
-	parsedRequest.command[secondSlashPosition] = '\0'; // place a null character at slash location
+	parsedRequest.command[secondSlashPosition] = '\0';
 
-	parsedRequest.parameter = &parsedRequest.command[secondSlashPosition + 1]; // set parameter equal to the reference of 1 character after the slash
+	// set parameter equal to the reference of 1 character after the slash
+	parsedRequest.parameter = &parsedRequest.command[secondSlashPosition + 1];
 }
