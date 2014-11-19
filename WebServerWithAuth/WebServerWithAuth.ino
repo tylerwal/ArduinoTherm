@@ -1,7 +1,8 @@
 #include <SPI.h>
 #include <Ethernet.h>
+#include "Structs.h"
 
-#define maxRequestLength 120
+#define maxBufferLength 120
 
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 1, 177);
@@ -10,16 +11,9 @@ EthernetClient client;
 
 typedef void (*actionMethod)(char*, char*);
 
-//char* request; //[maxRequestLength];
-char* command;
-char* parameter;
+void GetRequest(char *);
 
-class A
-{
-  public:
-   int x;
-   virtual void f() { x=1; }
-};
+void ParseReceivedRequest(char*, ParsedRequest &);
 
 void setup()
 {
@@ -29,6 +23,7 @@ void setup()
 
 	Serial.print("server is at ");
 	Serial.println(Ethernet.localIP());
+	ParsedRequest parsedRequest;
 }
 
 void loop()
@@ -36,46 +31,48 @@ void loop()
 	client = server.available();
 	if (client)
 	{
-		char* request = WaitForRequest(client);
+		char request[maxBufferLength];
+		GetHttpRequest(client, request);
+
+		ParsedRequest parsedRequest;
 		
-		Serial.println("Request in main loop:");
-        Serial.println(request);
-		Serial.println(":EndRequest");
-		//ParseReceivedRequest(request);
-		//PerformRequestedCommand();
+		//ParseReceivedRequest(request, parsedRequest);
 		
-		client.println("Command:");
-		client.println(command);
-		client.println("Parameter:");
-		client.println(parameter);
-		client.println(":EndParameter");
+		// Serial.println("buffer in main loop:");
+        // Serial.println(buffer);
+		// Serial.println(":Endbuffer");
 		
-        PrintHttpHeader("200 OK");
-        client.println(request);
+		// client.println("Command:");
+		// client.println(command);
+		// client.println("Parameter:");
+		// client.println(parameter);
+		// client.println(":EndParameter");
+		
+        // PrintHttpHeader("200 OK");
+        // client.println(buffer);
 		client.stop();
 	}
 }
 
-char* WaitForRequest(EthernetClient client)
+void GetHttpRequest(EthernetClient client, char* buffer)
 {
-	int requestLength = 0;
-	char request[maxRequestLength];
+	int bufferLength = 0;
 	
 	while (client.connected())
 	{
 		if (client.available())
 		{
-			char c = client.read();
+			char singleChar = client.read();
 
-			if (c == '\n')
+			if (singleChar == '\n')
 			{
 				break;
 			}
 			else
 			{
-				if (requestLength < maxRequestLength)
+				if (bufferLength < maxBufferLength)
 				{
-                    request[requestLength++] = c;
+                    buffer[bufferLength++] = singleChar;
 				}
 				else
 				{
@@ -84,36 +81,32 @@ char* WaitForRequest(EthernetClient client)
 			}
 		}
 	}
-
-	Serial.println("Request before adding null:");
-	Serial.println(request);
-	Serial.println(":EndRequest");
 	
-    request[requestLength++] = '\0';
-	
-	Serial.println("Request after adding null:");
-	Serial.println(request);
-	Serial.println(":EndRequest");
-	
-	return &request[0];
+    buffer[bufferLength++] = '\0';
 }
 
-// Parses the request into the HTTP method (request), command, and paramter variables
-// Received request templace: "METHOD /command/parameter HTTP/1.1"
-void ParseReceivedRequest(char* request)
+
+// Parses the buffer into the HTTP method (request), command, and paramter variables
+// Received buffer templace: "METHOD /command/parameter HTTP/1.1"
+void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 {
-	// chop off HTTP version
-	request[strrchr(request, ' ') - request] = '\0';
-
-	int firstSlashPosition = strstr(request, "/") - request;
-	request[firstSlashPosition - 1] = '\0'; // place a null character in 1 index in front of slash
-	command = &request[firstSlashPosition + 1]; // set command equal to the reference of 1 character after the slash
+  /*
+	parsedRequest.httpMethod = buffer;
 	
-	int secondSlashPosition = strstr(command, "/") - command;
-	command[secondSlashPosition] = '\0'; // place a null character at slash location
+	// chop off HTTP version
+	buffer[strrchr(buffer, ' ') - buffer] = '\0';
 
-	parameter = &command[secondSlashPosition + 1]; // set parameter equal to the reference of 1 character after the slash
+	int firstSlashPosition = strstr(buffer, "/") - buffer;
+	buffer[firstSlashPosition - 1] = '\0'; // place a null character in 1 index in front of slash
+	parsedRequest.command = &buffer[firstSlashPosition + 1]; // set command equal to the reference of 1 character after the slash
+
+	int secondSlashPosition = strstr(parsedRequest.command, "/") - parsedRequest.command;
+	parsedRequest.command[secondSlashPosition] = '\0'; // place a null character at slash location
+
+	parsedRequest.parameter = &parsedRequest.command[secondSlashPosition + 1]; // set parameter equal to the reference of 1 character after the slash
+  */
 }
+
 
 /*
 void PerformRequestedCommand()

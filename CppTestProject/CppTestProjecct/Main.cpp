@@ -1,13 +1,12 @@
-#define maxRequestLength 120
+#define maxBufferLength 120
 #include <iostream>
 
 char* sentString = "GET /temp/getItNow/ HTTP/1.1\nSome other stuff\nmore stuff\nEnd";
 
-void GetRequest(char *);
+void GetHttpRequest(char *);
 
-class ParsedRequest
+struct ParsedRequest
 {
-public:
 	char* httpMethod;
 	char* command;
 	char* parameter;
@@ -17,11 +16,11 @@ void ParseReceivedRequest(char*, ParsedRequest &);
 
 int main()
 {
-	char request[maxRequestLength];
-	GetRequest(request);
+	char buffer[maxBufferLength];
+	GetHttpRequest(buffer);
 
 	ParsedRequest parsedRequest;
-	ParseReceivedRequest(request, parsedRequest);
+	ParseReceivedRequest(buffer, parsedRequest);
 
 	std::cout << "HTTP Method: ";
 	std::cout << parsedRequest.httpMethod;
@@ -39,9 +38,9 @@ int main()
 	system("pause");
 }
 
-void GetRequest(char *request)
+void GetHttpRequest(char *buffer)
 {
-	int requestLength = 0;
+	int bufferLength = 0;
 
 	for ( int i = 0; i < strlen(sentString); i++)
 	{
@@ -53,9 +52,9 @@ void GetRequest(char *request)
 		}
 		else
 		{
-			if (requestLength < maxRequestLength)
+			if (bufferLength < maxBufferLength)
 			{
-				request[requestLength++] = c;
+				buffer[bufferLength++] = c;
 			}
 			else
 			{
@@ -64,19 +63,21 @@ void GetRequest(char *request)
 		}
 	}
 
-	request[requestLength++] = '\0';
+	buffer[bufferLength++] = '\0';
 }
 
-void ParseReceivedRequest(char* request, ParsedRequest & parsedRequest)
+// Parses the buffer into the HTTP method (request), command, and paramter variables
+// Received buffer templace: "METHOD /command/parameter HTTP/1.1"
+void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 {
-	parsedRequest.httpMethod = request;
-	
-	// chop off HTTP version
-	request[strrchr(request, ' ') - request] = '\0';
+	parsedRequest.httpMethod = buffer;
 
-	int firstSlashPosition = strstr(request, "/") - request;
-	request[firstSlashPosition - 1] = '\0'; // place a null character in 1 index in front of slash
-	parsedRequest.command = &request[firstSlashPosition + 1]; // set command equal to the reference of 1 character after the slash
+	// chop off HTTP version
+	buffer[strrchr(buffer, ' ') - buffer] = '\0';
+
+	int firstSlashPosition = strstr(buffer, "/") - buffer;
+	buffer[firstSlashPosition - 1] = '\0'; // place a null character in 1 index in front of slash
+	parsedRequest.command = &buffer[firstSlashPosition + 1]; // set command equal to the reference of 1 character after the slash
 
 	int secondSlashPosition = strstr(parsedRequest.command, "/") - parsedRequest.command;
 	parsedRequest.command[secondSlashPosition] = '\0'; // place a null character at slash location
