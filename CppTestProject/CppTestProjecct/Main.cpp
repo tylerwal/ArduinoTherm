@@ -1,7 +1,7 @@
 #define maxRequestLength 120
 #include <iostream>
 
-char* sentString = "GET /test/test2/ HTTP/1.1\nSome other stuff\nmore stuff\nEnd";
+char* sentString = "GET /temp/getItNow/ HTTP/1.1\nSome other stuff\nmore stuff\nEnd";
 
 void GetRequest(char *);
 
@@ -13,23 +13,28 @@ public:
 	char* parameter;
 };
 
-ParsedRequest* ParseReceivedRequest(char*);
+void ParseReceivedRequest(char*, ParsedRequest &);
 
 int main()
 {
 	char request[maxRequestLength];
 	GetRequest(request);
-	
-	std::cout << "\n";
-	std::cout << "In main:\n";
-	std::cout << request;
-	std::cout << "\n";
-	std::cout << typeid(request).name();
+
+	ParsedRequest parsedRequest;
+	ParseReceivedRequest(request, parsedRequest);
+
+	std::cout << "HTTP Method: ";
+	std::cout << parsedRequest.httpMethod;
 	std::cout << "\n";
 
-	//parsedRequest = 
-	ParseReceivedRequest(request);
-	//
+	std::cout << "Command: ";
+	std::cout << parsedRequest.command;
+	std::cout << "\n";
+
+	std::cout << "Parameter: ";
+	std::cout << parsedRequest.parameter;
+	std::cout << "\n";
+
 	std::cout << "\n";
 	system("pause");
 }
@@ -62,18 +67,10 @@ void GetRequest(char *request)
 	request[requestLength++] = '\0';
 }
 
-ParsedRequest* ParseReceivedRequest(char* request)
+void ParseReceivedRequest(char* request, ParsedRequest & parsedRequest)
 {
-	ParsedRequest parsedRequest;
-
-	std::cout << "\n";
-	std::cout << "In Parse:\n";
-	std::cout << request;
-	std::cout << "\n";
-	std::cout << typeid(request).name();
-	std::cout << "\n";
-
-	/*
+	parsedRequest.httpMethod = request;
+	
 	// chop off HTTP version
 	request[strrchr(request, ' ') - request] = '\0';
 
@@ -85,7 +82,4 @@ ParsedRequest* ParseReceivedRequest(char* request)
 	parsedRequest.command[secondSlashPosition] = '\0'; // place a null character at slash location
 
 	parsedRequest.parameter = &parsedRequest.command[secondSlashPosition + 1]; // set parameter equal to the reference of 1 character after the slash
-	*/
-
-	return new ParsedRequest;
 }
