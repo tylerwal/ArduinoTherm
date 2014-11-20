@@ -1,7 +1,7 @@
 #define maxBufferLength 120
 #include <iostream>
 
-char* sentString = "GET /temp/getItNow/ HTTP/1.1\nSome other stuff\nmore stuff\nEnd";
+char* sentString = "GET /temp/getItNow/ HTTP/1.1";
 
 typedef void(*actionMethod)(char*, char*);
 void GetHttpRequest(char *);
@@ -14,6 +14,11 @@ struct ParsedRequest
 };
 
 void ParseReceivedRequest(char*, ParsedRequest &);
+void PerformRequestedCommand(ParsedRequest &);
+void PrintHttpHeader(char*);
+bool CompareStrings(char*, char*);
+void Get(char*, char*);
+void Put(char*, char*);
 
 int main()
 {
@@ -23,19 +28,7 @@ int main()
 	ParsedRequest parsedRequest;
 	ParseReceivedRequest(buffer, parsedRequest);
 
-	std::cout << "HTTP Method: ";
-	std::cout << parsedRequest.httpMethod;
-	std::cout << "\n";
-
-	std::cout << "Command: ";
-	std::cout << parsedRequest.command;
-	std::cout << "\n";
-
-	std::cout << "Parameter: ";
-	std::cout << parsedRequest.parameter;
-	std::cout << "\n";
-
-	std::cout << "\n";
+	PerformRequestedCommand(parsedRequest);
 	system("pause");
 }
 
@@ -90,7 +83,7 @@ void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 
 void PerformRequestedCommand(ParsedRequest & parsedRequest)
 {
-	actionMethod action;
+	actionMethod action = nullptr;
 
 	PrintHttpHeader("200 OK");
 
@@ -104,9 +97,11 @@ void PerformRequestedCommand(ParsedRequest & parsedRequest)
 	}
 	else if (CompareStrings(parsedRequest.httpMethod, "POST"))
 	{
+		std::cout << "POST....";
 	}
 	else if (CompareStrings(parsedRequest.httpMethod, "DELETE"))
 	{
+		std::cout << "DELETE....";
 	}
 
 	action(parsedRequest.command, parsedRequest.parameter);
@@ -114,16 +109,22 @@ void PerformRequestedCommand(ParsedRequest & parsedRequest)
 
 void Get(char* com, char* par)
 {
-	/* 	client.println("Get!!");
-	client.println(com);
-	client.println(par); */
+	std::cout << "Get....";
+	std::cout << "\n";
+	std::cout << com;
+	std::cout << "\n";
+	std::cout << par;
+	std::cout << "\n";
 }
 
 void Put(char* com, char* par)
 {
-	/* 	client.println("Put??");
-	client.println(com);
-	client.println(par); */
+	std::cout << "Put.....";
+	std::cout << "\n";
+	std::cout << com;
+	std::cout << "\n";
+	std::cout << par;
+	std::cout << "\n";
 }
 
 bool CompareStrings(char* one, char* two)
@@ -135,6 +136,6 @@ void PrintHttpHeader(char* code)
 {
 	std::cout <<"HTTP/1.1 ";
 	std::cout << code;
-	std::cout << "Content-Type: text/html";
-	std::cout << "Connection: close";
+	std::cout << "\nContent-Type: text/html";
+	std::cout << "\nConnection: close\n";
 }
