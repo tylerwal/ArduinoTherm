@@ -3,6 +3,7 @@
 
 char* sentString = "GET /temp/getItNow/ HTTP/1.1\nSome other stuff\nmore stuff\nEnd";
 
+typedef void(*actionMethod)(char*, char*);
 void GetHttpRequest(char *);
 
 struct ParsedRequest
@@ -85,4 +86,55 @@ void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 
 	// set parameter equal to the reference of 1 character after the slash
 	parsedRequest.parameter = &parsedRequest.command[secondSlashPosition + 1];
+}
+
+void PerformRequestedCommand(ParsedRequest & parsedRequest)
+{
+	actionMethod action;
+
+	PrintHttpHeader("200 OK");
+
+	if (CompareStrings(parsedRequest.httpMethod, "GET"))
+	{
+		action = &Get;
+	}
+	else if (CompareStrings(parsedRequest.httpMethod, "PUT"))
+	{
+		action = &Put;
+	}
+	else if (CompareStrings(parsedRequest.httpMethod, "POST"))
+	{
+	}
+	else if (CompareStrings(parsedRequest.httpMethod, "DELETE"))
+	{
+	}
+
+	action(parsedRequest.command, parsedRequest.parameter);
+}
+
+void Get(char* com, char* par)
+{
+	/* 	client.println("Get!!");
+	client.println(com);
+	client.println(par); */
+}
+
+void Put(char* com, char* par)
+{
+	/* 	client.println("Put??");
+	client.println(com);
+	client.println(par); */
+}
+
+bool CompareStrings(char* one, char* two)
+{
+	return strcmp(one, two) == 0;
+}
+
+void PrintHttpHeader(char* code)
+{
+	std::cout <<"HTTP/1.1 ";
+	std::cout << code;
+	std::cout << "Content-Type: text/html";
+	std::cout << "Connection: close";
 }

@@ -103,8 +103,6 @@ void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 	parsedRequest.parameter = &parsedRequest.command[secondSlashPosition + 1]; 
 }
 
-
-/*
 void PerformRequestedCommand()
 {	
 	actionMethod action;
@@ -129,7 +127,6 @@ void PerformRequestedCommand()
 	action(command, parameter);
 	client.println(freeRam());
 }
-*/
 
 void Get(char* com, char* par)
 {
