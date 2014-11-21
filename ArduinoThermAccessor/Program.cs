@@ -28,10 +28,15 @@ namespace ArduinoThermAccessor
 
 			for (int i = 0; i < 100; i++)
 			{
-				string returnedValue = _webClient.UploadString(@"http://192.168.1.177/getTemp/42", "PUT", string.Empty);
+				//string returnedValue = _webClient.UploadString(@"http://192.168.1.177/DesiredTemp/70", "PUT", string.Empty);
+
+				string currentTemp = _webClient.DownloadString(@"http://192.168.1.177/Temp/");
+				string returnedValue = _webClient.DownloadString(@"http://192.168.1.177/FreeMemory/");
 
 				int currentValue;
 				int.TryParse(returnedValue, out currentValue);
+
+				Console.WriteLine(currentValue);
 
 				if (i == 0)
 				{

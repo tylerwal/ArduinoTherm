@@ -118,8 +118,6 @@ void PerformRequestedCommand(ParsedRequest & parsedRequest)
 {
 	actionMethod action;
 
-	PrintHttpHeader("200 OK");
-
 	if (CompareStrings(parsedRequest.httpMethod, "GET"))
 	{
 		action = &Get;
@@ -136,7 +134,7 @@ void PerformRequestedCommand(ParsedRequest & parsedRequest)
 	}
 	else
 	{
-		PrintHttpHeader("HTTP/1.1 404 Not found"); 
+		PrintHttpHeader("404 Not found"); 
 	}
 
 	action(parsedRequest.command, parsedRequest.parameter);
