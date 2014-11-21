@@ -122,11 +122,11 @@ void PerformRequestedCommand(ParsedRequest & parsedRequest)
 
 	if (CompareStrings(parsedRequest.httpMethod, "GET"))
 	{
-		action = &GetTemp;
+		action = &Get;
 	}
 	else if (CompareStrings(parsedRequest.httpMethod, "PUT"))
 	{
-		action = &PutTemp;
+		action = &Put;
 	}
 	else if (CompareStrings(parsedRequest.httpMethod, "POST"))
 	{
@@ -149,7 +149,7 @@ void UpdateTempValues()
 	temperature = dht.getTemperature();
 }
 
-void GetTemp(char* command, char* parameter)
+void Get(char* command, char* parameter)
 {
 	PrintHttpHeader("200 OK");
 
@@ -165,6 +165,10 @@ void GetTemp(char* command, char* parameter)
 	{
 		client.print(dhtStatus);   
 	}
+        else if (CompareStrings("FreeMemory", command))
+        {
+                 client.print(freeRam());
+        }
 	else
 	{
 		client.print("Status: ");
@@ -178,15 +182,14 @@ void GetTemp(char* command, char* parameter)
 	}
 }
 
-void PutTemp(char* command, char* parameter)
+void Put(char* command, char* parameter)
 {
 	PrintHttpHeader("200 OK");
 	
-	if (CompareStrings("Temp", command))
+	if (CompareStrings("DesiredTemp", command))
 	{
 		desiredTemp = atof(parameter);
-		
-		client.print("Desired Temp Set To: ");
+
 		client.print(desiredTemp);
 	}
 }
@@ -206,7 +209,7 @@ void PrintHttpHeader(char* code)
 }
 
 // code @ https://learn.adafruit.com/memories-of-an-arduino/measuring-free-memory
-int freeRam ()
+int freeRam()
 {
 	extern int __heap_start, *__brkval;
 	int v;
