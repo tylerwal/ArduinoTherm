@@ -36,6 +36,8 @@ void loop()
 		ParsedRequest parsedRequest;		
 		ParseReceivedRequest(buffer, parsedRequest);
 		
+		PerformRequestedCommand(parsedRequest);
+		
         PrintHttpHeader("200 OK");
 		client.println("Method:");
 		client.println(parsedRequest.httpMethod);
@@ -103,29 +105,30 @@ void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 	parsedRequest.parameter = &parsedRequest.command[secondSlashPosition + 1]; 
 }
 
-void PerformRequestedCommand()
-{	
-	actionMethod action;
+void PerformRequestedCommand(ParsedRequest & parsedRequest)
+{
+	actionMethod action = nullptr;
 
 	PrintHttpHeader("200 OK");
-	
-	if (CompareStrings(request, "GET"))
+
+	if (CompareStrings(parsedRequest.httpMethod, "GET"))
 	{
 		action = &Get;
 	}
-	else if (CompareStrings(request, "PUT"))
+	else if (CompareStrings(parsedRequest.httpMethod, "PUT"))
 	{
 		action = &Put;
 	}
-	else if (CompareStrings(request, "POST"))
+	else if (CompareStrings(parsedRequest.httpMethod, "POST"))
 	{
+		std::cout << "POST....";
 	}
-	else if (CompareStrings(request, "DELETE"))
+	else if (CompareStrings(parsedRequest.httpMethod, "DELETE"))
 	{
+		std::cout << "DELETE....";
 	}
-	
-	action(command, parameter);
-	client.println(freeRam());
+
+	action(parsedRequest.command, parsedRequest.parameter);
 }
 
 void Get(char* com, char* par)

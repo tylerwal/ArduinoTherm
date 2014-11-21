@@ -3,8 +3,9 @@
 #include <string.h>
 #include "DHT.h"
 #include "TimerOne.h"
+#include "Structs.h"
 
-#define bufferMax 128
+#define maxBufferLength 120
 #define DhtUpdateInterval 3000000
 
 DHT dht;
@@ -18,18 +19,14 @@ IPAddress ip(192, 168, 1, 177);
 EthernetServer server(80);
 EthernetClient client;
 
-int bufferSize;
-char buffer[bufferMax];
+typedef void (*actionMethod)(char*, char*);
 
-char cmd[15];
-char param1[15];
-char param2[15];
+void GetRequest(char *);
+
+void ParseReceivedRequest(char*, ParsedRequest &);
 
 void setup()
 {
-	//test
-	//pinMode(13, OUTPUT);
-	
 	Ethernet.begin(mac, ip);
 	server.begin();
 	
@@ -48,37 +45,40 @@ void setup()
 
 void loop()
 {
-	//test
-	//digitalWrite(13, LOW);
 	client = server.available();
 	if (client)
 	{
-		WaitForRequest(client);
-		ParseReceivedRequest();
-		PerformRequestedCommands();
+		char buffer[maxBufferLength];
+		GetHttpRequest(client, buffer);
+
+		ParsedRequest parsedRequest;		
+		ParseReceivedRequest(buffer, parsedRequest);
+		
+		PerformRequestedCommand(parsedRequest);
 		
 		client.stop();
 	}
 }
 
-void WaitForRequest(EthernetClient client)
+void GetHttpRequest(EthernetClient client, char* buffer)
 {
-	bufferSize = 0;
+	int bufferLength = 0;
 	
-	while (client.connected()) 
+	while (client.connected())
 	{
-		if (client.available()) 
+		if (client.available())
 		{
-			char c = client.read();
-			if (c == '\n')
+			char singleChar = client.read();
+
+			if (singleChar == '\n')
 			{
 				break;
 			}
 			else
 			{
-				if (bufferSize < bufferMax)
+				if (bufferLength < maxBufferLength)
 				{
-					buffer[bufferSize++] = c;
+                    buffer[bufferLength++] = singleChar;
 				}
 				else
 				{
@@ -88,62 +88,58 @@ void WaitForRequest(EthernetClient client)
 		}
 	}
 	
-	PrintNumber("bufferSize", bufferSize);
+    buffer[bufferLength++] = '\0';
 }
 
-void ParseReceivedRequest()
+// Parses the buffer into the HTTP method (request), command, and paramter variables
+// Received buffer template: "METHOD /command/parameter HTTP/1.1"
+void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 {
-	Serial.println("in ParseReceivedRequest");
-	Serial.println(buffer);
-	
-	//Received buffer contains "GET /cmd/param1/param2 HTTP/1.1".  Break it up.
-	char* slash1;
-	char* slash2;
-	char* slash3;
-	char* space2;
-	
-	slash1 = strstr(buffer, "/") + 1; // Look for first slash
-	slash2 = strstr(slash1, "/") + 1; // second slash
-	slash3 = strstr(slash2, "/") + 1; // third slash
-	space2 = strstr(slash2, " ") + 1; // space after second slash (in case there is no third slash)
+	// ************ HTTP Method ************
+	// chop off HTTP version
+	buffer[strrchr(buffer, ' ') - buffer] = '\0';
+	parsedRequest.httpMethod = buffer;
 
-	if (slash3 > space2) 
-	{
-		slash3=slash2;
-	}
-	
-	PrintString("slash1",slash1);
-	PrintString("slash2",slash2);
-	PrintString("slash3",slash3);
-	PrintString("space2",space2);
-	
-	// strncpy does not automatically add terminating zero, but strncat does! So start with blank string and concatenate.
-	cmd[0] = 0;
-	param1[0] = 0;
-	param2[0] = 0;
-	strncat(cmd, slash1, slash2-slash1-1);
-	strncat(param1, slash2, slash3-slash2-1);
-	strncat(param2, slash3, space2-slash3-1);
-	
-	PrintString("cmd",cmd);
-	PrintString("param1",param1);
-	PrintString("param2",param2);
+	// ************ Command ************
+	int firstSlashPosition = strstr(buffer, "/") - buffer;
+	// place a null character in 1 index in front of slash
+	buffer[firstSlashPosition - 1] = '\0'; 
+	// set command equal to the reference of 1 character after the slash
+	parsedRequest.command = &buffer[firstSlashPosition + 1]; 
+	int secondSlashPosition = strstr(parsedRequest.command, "/") - parsedRequest.command;
+	parsedRequest.command[secondSlashPosition] = '\0';
+
+	// ************ Parameter ************
+	// set parameter equal to the reference of 1 character after the slash
+	parsedRequest.parameter = &parsedRequest.command[secondSlashPosition + 1]; 
 }
 
-void PerformRequestedCommands()
+void PerformRequestedCommand(ParsedRequest & parsedRequest)
 {
-	if ( strcmp(cmd,"getTemp") == 0 ) 
+	actionMethod action;
+
+	PrintHttpHeader("200 OK");
+
+	if (CompareStrings(parsedRequest.httpMethod, "GET"))
 	{
-		GetTemp();
+		action = &GetTemp;
 	}
-	else if ( strcmp(cmd,"setTemp") == 0 ) 
+	else if (CompareStrings(parsedRequest.httpMethod, "PUT"))
 	{
-		SetTemp();
+		action = &PutTemp;
+	}
+	else if (CompareStrings(parsedRequest.httpMethod, "POST"))
+	{
+	}
+	else if (CompareStrings(parsedRequest.httpMethod, "DELETE"))
+	{
 	}
 	else
 	{
 		PrintHttpHeader("HTTP/1.1 404 Not found"); 
 	}
+
+	action(parsedRequest.command, parsedRequest.parameter);
 }
 
 void UpdateTempValues()
@@ -153,23 +149,19 @@ void UpdateTempValues()
 	temperature = dht.getTemperature();
 }
 
-void GetTemp()
+void GetTemp(char* command, char* parameter)
 {
-	PrintHttpHeader("HTTP/1.1 200 OK");
-	
-	dhtStatus = dht.getStatusString();
-	humidity = dht.getHumidity();
-	temperature = dht.getTemperature();
-	
-	if (strcmp(param1, "temp") == 0) 
+	PrintHttpHeader("200 OK");
+
+	if (CompareStrings("Temp", command))
 	{
 		client.print(dht.toFahrenheit(temperature), 1);
 	}
-	else if (strcmp(param1, "humidity") == 0) 
+	else if (CompareStrings("Humidity", command)) 
 	{
 		client.print(humidity, 1);    
 	}
-	else if (strcmp(param1, "status") == 0) 
+	else if (CompareStrings("Status", command))
 	{
 		client.print(dhtStatus);   
 	}
@@ -186,42 +178,37 @@ void GetTemp()
 	}
 }
 
-void SetTemp()
+void PutTemp(char* command, char* parameter)
 {
-	PrintHttpHeader("HTTP/1.1 200 OK");
+	PrintHttpHeader("200 OK");
 	
-	if (strcmp(param1, "current") == 0) 
+	if (CompareStrings("Temp", command))
 	{
-		client.print("Desired Temp Set At: ");
-	}
-	else
-	{
-		desiredTemp = atof(param1);
+		desiredTemp = atof(parameter);
+		
 		client.print("Desired Temp Set To: ");
+		client.print(desiredTemp);
 	}
-
-	client.print(desiredTemp);
-	client.println("");
 }
 
-void PrintString(char* label, char* str)
+bool CompareStrings(char* one, char* two)
 {
-	Serial.print(label);
-	Serial.print("=");
-	Serial.println(str);
+	return strcmp(one, two) == 0;
 }
 
-void PrintNumber(char* label, int number)
+void PrintHttpHeader(char* code)
 {
-	Serial.print(label);
-	Serial.print("=");
-	Serial.println(number, DEC);
-}
-
-void PrintHttpHeader(String code)
-{
+	client.print("HTTP/1.1 ");
 	client.println(code);
 	client.println("Content-Type: text/html");
 	client.println("Connection: close");  // the connection will be closed after completion of the response
 	client.println(); 
+}
+
+// code @ https://learn.adafruit.com/memories-of-an-arduino/measuring-free-memory
+int freeRam ()
+{
+	extern int __heap_start, *__brkval;
+	int v;
+	return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
 }
