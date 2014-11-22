@@ -1,6 +1,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <string.h>
+#include <map>
 #include "DHT.h"
 #include "TimerOne.h"
 #include "Structs.h"
@@ -126,15 +127,10 @@ void PerformRequestedCommand(ParsedRequest & parsedRequest)
 	{
 		action = &Put;
 	}
-	else if (CompareStrings(parsedRequest.httpMethod, "POST"))
-	{
-	}
-	else if (CompareStrings(parsedRequest.httpMethod, "DELETE"))
-	{
-	}
 	else
 	{
-		PrintHttpHeader("404 Not found"); 
+		PrintHttpHeader("404 Not found");
+		return;
 	}
 
 	action(parsedRequest.command, parsedRequest.parameter);
@@ -144,7 +140,7 @@ void UpdateTempValues()
 {
 	dhtStatus = dht.getStatusString();
 	humidity = dht.getHumidity();
-	temperature = dht.getTemperature();
+	temperature = dht.toFahrenheit(temperature);
 }
 
 void Get(char* command, char* parameter)
@@ -153,20 +149,20 @@ void Get(char* command, char* parameter)
 
 	if (CompareStrings("Temp", command))
 	{
-		client.print(dht.toFahrenheit(temperature), 1);
+		client.print(temperature, 1);
 	}
 	else if (CompareStrings("Humidity", command)) 
 	{
-		client.print(humidity, 1);    
+		client.print(humidity, 1);
 	}
 	else if (CompareStrings("Status", command))
 	{
-		client.print(dhtStatus);   
+		client.print(dhtStatus);
 	}
-        else if (CompareStrings("FreeMemory", command))
-        {
-                 client.print(freeRam());
-        }
+	else if (CompareStrings("FreeMemory", command))
+	{
+		client.print(freeRam());
+	}
 	else
 	{
 		client.print("Status: ");
