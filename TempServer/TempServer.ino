@@ -1,7 +1,6 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <string.h>
-#include <map>
 #include "DHT.h"
 #include "TimerOne.h"
 #include "Structs.h"
