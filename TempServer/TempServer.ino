@@ -1,6 +1,6 @@
 #include <SPI.h>
 #include <Ethernet.h>
-#include <string.h>
+//#include <string.h>
 #include "DHT.h"
 #include "TimerOne.h"
 #include "Structs.h"
@@ -12,18 +12,18 @@ DHT dht;
 float desiredTemp;
 float humidity;
 float temperature;
-String dhtStatus;
+const char* dhtStatus;
 
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 1, 177);
 EthernetServer server(80);
 EthernetClient client;
 
-typedef void (*actionMethod)(char*, char*);
+typedef void (*actionMethod)(const char*, const char*);
 
 void GetRequest(char *);
 
-void ParseReceivedRequest(char*, ParsedRequest &);
+void ParseReceivedRequest(const char*, ParsedRequest &);
 
 void setup()
 {
@@ -139,16 +139,26 @@ void UpdateTempValues()
 {
 	dhtStatus = dht.getStatusString();
 	humidity = dht.getHumidity();
-	temperature = dht.toFahrenheit(temperature);
+	temperature = dht.toFahrenheit(dht.getTemperature());
 }
 
-void Get(char* command, char* parameter)
+void Get(const char* command, const char* parameter)
 {
 	PrintHttpHeader("200 OK");
+	
+	//const char *commandKeyValues[2][2] = {{"Temp", temperature},{}};
 
 	if (CompareStrings("Temp", command))
 	{
+                //char* temp;
+                //itoa(temperature, temp, 10);
+                client.print("float: ");
 		client.print(temperature, 1);
+                client.print("    char pointer: ");
+                
+                char buf[10];
+                sprintf(buf, "%F", temperature);
+                client.print(buf);
 	}
 	else if (CompareStrings("Humidity", command)) 
 	{
@@ -175,7 +185,7 @@ void Get(char* command, char* parameter)
 	}
 }
 
-void Put(char* command, char* parameter)
+void Put(const char* command, const char* parameter)
 {
 	PrintHttpHeader("200 OK");
 	
@@ -187,12 +197,12 @@ void Put(char* command, char* parameter)
 	}
 }
 
-bool CompareStrings(char* one, char* two)
+bool CompareStrings(const char* one, const char* two)
 {
 	return strcmp(one, two) == 0;
 }
 
-void PrintHttpHeader(char* code)
+void PrintHttpHeader(const char* code)
 {
 	client.print("HTTP/1.1 ");
 	client.println(code);
