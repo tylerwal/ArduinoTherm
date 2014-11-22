@@ -50,7 +50,7 @@ void loop()
 	{
 		char buffer[maxBufferLength];
 		GetHttpRequest(client, buffer);
-
+		
 		ParsedRequest parsedRequest;		
 		ParseReceivedRequest(buffer, parsedRequest);
 		
@@ -69,7 +69,7 @@ void GetHttpRequest(EthernetClient client, char* buffer)
 		if (client.available())
 		{
 			char singleChar = client.read();
-
+			
 			if (singleChar == '\n')
 			{
 				break;
@@ -99,7 +99,7 @@ void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 	// chop off HTTP version
 	buffer[strrchr(buffer, ' ') - buffer] = '\0';
 	parsedRequest.httpMethod = buffer;
-
+	
 	// ************ Command ************
 	int firstSlashPosition = strstr(buffer, "/") - buffer;
 	// place a null character in 1 index in front of slash
@@ -108,7 +108,7 @@ void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 	parsedRequest.command = &buffer[firstSlashPosition + 1]; 
 	int secondSlashPosition = strstr(parsedRequest.command, "/") - parsedRequest.command;
 	parsedRequest.command[secondSlashPosition] = '\0';
-
+	
 	// ************ Parameter ************
 	// set parameter equal to the reference of 1 character after the slash
 	parsedRequest.parameter = &parsedRequest.command[secondSlashPosition + 1]; 
@@ -117,7 +117,7 @@ void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 void PerformRequestedCommand(ParsedRequest & parsedRequest)
 {
 	actionMethod action;
-
+	
 	if (CompareStrings(parsedRequest.httpMethod, "GET"))
 	{
 		action = &Get;
@@ -131,7 +131,7 @@ void PerformRequestedCommand(ParsedRequest & parsedRequest)
 		PrintHttpHeader("404 Not found");
 		return;
 	}
-
+	
 	action(parsedRequest.command, parsedRequest.parameter);
 }
 
@@ -147,18 +147,21 @@ void Get(const char* command, const char* parameter)
 	PrintHttpHeader("200 OK");
 	
 	//const char *commandKeyValues[2][2] = {{"Temp", temperature},{}};
-
+	
 	if (CompareStrings("Temp", command))
 	{
-                //char* temp;
-                //itoa(temperature, temp, 10);
-                client.print("float: ");
 		client.print(temperature, 1);
-                client.print("    char pointer: ");
-                
-                char buf[10];
-                sprintf(buf, "%F", temperature);
-                client.print(buf);
+	}
+	else if (CompareStrings("TempString", command))
+	{
+		char buf[6];
+		itoa(temperature * 10, buf, 10);
+		int tempLen = strlen(buf);
+		buf[tempLen + 1] = buf[tempLen];
+		buf[tempLen] = buf[tempLen - 1];
+		buf[tempLen - 1] = '.';
+
+		client.print(buf);
 	}
 	else if (CompareStrings("Humidity", command)) 
 	{
@@ -184,7 +187,7 @@ void Get(const char* command, const char* parameter)
 		client.println(dht.toFahrenheit(temperature), 1);
 	}
 }
-
+	
 void Put(const char* command, const char* parameter)
 {
 	PrintHttpHeader("200 OK");
@@ -192,16 +195,16 @@ void Put(const char* command, const char* parameter)
 	if (CompareStrings("DesiredTemp", command))
 	{
 		desiredTemp = atof(parameter);
-
+		
 		client.print(desiredTemp);
 	}
 }
-
+	
 bool CompareStrings(const char* one, const char* two)
 {
 	return strcmp(one, two) == 0;
 }
-
+	
 void PrintHttpHeader(const char* code)
 {
 	client.print("HTTP/1.1 ");
@@ -218,3 +221,4 @@ int freeRam()
 	int v;
 	return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
 }
+		
