@@ -14,8 +14,8 @@ namespace ArduinoThermAccessor
 		public static void Main(string[] args)
 		{
 			Program prog = new Program();
-			Dictionary<string, double> testTimes = new Dictionary<string, double>();
-			int iterations = 40;
+			Dictionary<string, BenchmarkData> benchmarkDatas = new Dictionary<string, BenchmarkData>();
+			int iterations = 25;
 
 			List<string> methods = new List<string>
 			{
@@ -27,46 +27,36 @@ namespace ArduinoThermAccessor
 				"/else/"
 			};
 
-			foreach (var method in methods)
+			foreach (string method in methods)
 			{
-				double time = prog.TestArduinoGetMethod(@"http://192.168.1.177" + method, iterations);
-				testTimes.Add(method, time);
+				benchmarkDatas.Add(method, prog.TestArduinoGetMethod(@"http://192.168.1.177" + method, iterations));
 			}
 
 			Console.WriteLine();
-			foreach (var testTime in testTimes)
+
+			foreach (KeyValuePair<string, BenchmarkData> benchmarkData in benchmarkDatas)
 			{
-				Console.WriteLine("Method: {0}\nAverage time: {1}\n", testTime.Key, testTime.Value);
+				Console.WriteLine("Method: {0}\tAverage Test Time: {1}", benchmarkData.Key, benchmarkData.Value.TestAverageTime);
+				Console.WriteLine("Pre Memory: {0}\tPost Memory: {1}\n", benchmarkData.Value.BeforeFreeMemory, benchmarkData.Value.AfterFreeMemory);
 			}
 			
 			Console.Read();
 		}
 
-		private void ReadServer()
+		private BenchmarkData TestArduinoGetMethod(string url, int iterations)
 		{
-			string allTemp = _webClient.DownloadString(@"http://192.168.1.177/getTemp/42");
-
-			Console.WriteLine(allTemp);
-			Console.Read();
-		}
-
-		private double TestArduinoGetMethod(string url, int iterations)
-		{
-			Console.WriteLine("Method: {0}", url);
-
-			int initialFreeMemory = 0;
+			Console.Write("Method: {0}", url);
 
 			Stopwatch stopwatch = new Stopwatch();
 			List<long> elapsedTimes = new List<long>();
-		
+
+			string beforeFreeMemory = _webClient.DownloadString(@"http://192.168.1.177/FreeMemory/");
+
 			for (int i = 0; i < iterations; i++)
 			{
 				stopwatch.Start();
 
-				//string returnedValue = _webClient.UploadString(@"http://192.168.1.177/DesiredTemp/70", "PUT", string.Empty);
-
 				string returnedValue = _webClient.DownloadString(@"http://192.168.1.177/TempString/");
-				//string returnedFreeMemory = _webClient.DownloadString(@"http://192.168.1.177/FreeMemory/");
 
 				long time = stopwatch.ElapsedMilliseconds;
 				stopwatch.Reset();
@@ -77,23 +67,20 @@ namespace ArduinoThermAccessor
 				int.TryParse(returnedValue, out currentValue);
 
 				Console.Write(".");
-
-//				if (i == 0)
-//				{
-//					initialFreeMemory = currentValue;
-//				}
-//
-//				if (currentValue < initialFreeMemory)
-//				{
-//					Console.WriteLine("!!! Memory Leak Detected !!!");
-//					Console.WriteLine("Initial memory: {0}", initialFreeMemory);
-//					Console.WriteLine("Current memory: {0}", currentValue);
-//				}
 			}
 			Console.WriteLine();
 
-			double averageTime = elapsedTimes.Average();
-			return averageTime;
+			string afterFreeMemory = _webClient.DownloadString(@"http://192.168.1.177/FreeMemory/");
+
+			BenchmarkData benchmarkData = new BenchmarkData
+			{
+				Url = url,
+				TestAverageTime = elapsedTimes.Average(),
+				BeforeFreeMemory = int.Parse(beforeFreeMemory),
+				AfterFreeMemory = int.Parse(afterFreeMemory)
+			};
+
+			return benchmarkData;
 		}
 
 		private void ReadArduino()
