@@ -15,13 +15,16 @@ namespace ArduinoThermAccessor
 		{
 			Program prog = new Program();
 			Dictionary<string, double> testTimes = new Dictionary<string, double>();
-			int iterations = 150;
+			int iterations = 40;
 
 			List<string> methods = new List<string>
 			{
 				"/TempString/",
 				"/Temp/",
-				"/FreeMemory/"
+				"/Status/",
+				"Humidity",
+				"/FreeMemory/",
+				"/else/"
 			};
 
 			foreach (var method in methods)

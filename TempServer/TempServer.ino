@@ -9,7 +9,7 @@
 #define DhtUpdateInterval 3000000
 
 DHT dht;
-float desiredTemp;
+float goalTemp;
 float humidity;
 float temperature;
 const char* dhtStatus;
@@ -177,14 +177,7 @@ void Get(const char* command, const char* parameter)
 	}
 	else
 	{
-		client.print("Status: ");
-		client.print(dhtStatus);
-		client.println("");
-		client.print("Humidity: ");
-		client.print(humidity, 1);
-		client.println("");
-		client.print("Temperature: ");
-		client.println(dht.toFahrenheit(temperature), 1);
+		client.print("Resource Directory:<br><br>Get: Temp, GoalTemp, Humidity, Status<br>Put: GoalTemp");
 	}
 }
 	
@@ -192,11 +185,11 @@ void Put(const char* command, const char* parameter)
 {
 	PrintHttpHeader("200 OK");
 	
-	if (CompareStrings("DesiredTemp", command))
+	if (CompareStrings("GoalTemp", command))
 	{
-		desiredTemp = atof(parameter);
+		goalTemp = atof(parameter);
 		
-		client.print(desiredTemp);
+		client.print(goalTemp);
 	}
 }
 	
