@@ -34,7 +34,9 @@ void ParseReceivedRequest(const char*, ParsedRequest &);
 
 void setup()
 {
+  
 	Ethernet.begin(mac, ip);
+
 	server.begin();
 	
 	Serial.begin(9600);
@@ -48,9 +50,9 @@ void setup()
 	
 	Timer1.initialize(DhtUpdateInterval);
 	Timer1.attachInterrupt(PerformPeriodicThermostatUpdate);
-	
-	pinMode(13, OUTPUT);
-	pinMode(12, OUTPUT);
+
+	pinMode(8, OUTPUT);
+	pinMode(9, OUTPUT);
 }
 
 void loop()
@@ -157,14 +159,14 @@ void PerformPeriodicThermostatUpdate()
 	// ***************** Perform Thermostat Functions *****************
 	if (goalTemperature > currentTemperature)
 	{
-		digitalWrite(13, HIGH);
-		digitalWrite(12, LOW); 
+		digitalWrite(9, HIGH);
+		digitalWrite(8, LOW); 
 		Serial.println("Heat Up");
 	}
 	else if (goalTemperature < currentTemperature)
 	{
-		digitalWrite(13, LOW); 
-		digitalWrite(12, HIGH);
+		digitalWrite(9, LOW); 
+		digitalWrite(8, HIGH);
 		Serial.println("Cool down");
 	}
 }
@@ -201,6 +203,9 @@ void PerformGet(const char* command, const char* parameter)
 	{
 		client.print("404");
 	}
+	
+	//digitalWrite(13, HIGH);
+	//digitalWrite(12, HIGH); 
 }
 	
 void PerformPut(const char* command, const char* parameter)
@@ -212,6 +217,9 @@ void PerformPut(const char* command, const char* parameter)
 		goalTemperature = atof(parameter);
 		client.print(goalTemperature);
 	}
+	
+	//digitalWrite(13, LOW);
+	//digitalWrite(12, LOW); 
 }
 	
 bool CompareStrings(const char* one, const char* two)
