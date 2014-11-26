@@ -1,6 +1,5 @@
 #include <SPI.h>
 #include <Ethernet.h>
-//#include <string.h>
 #include "DHT.h"
 #include "TimerOne.h"
 #include "Structs.h"
@@ -102,8 +101,10 @@ void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 	
 	// ************ Command ************
 	int firstSlashPosition = strstr(buffer, "/") - buffer;
+	
 	// place a null character in 1 index in front of slash
 	buffer[firstSlashPosition - 1] = '\0'; 
+	
 	// set command equal to the reference of 1 character after the slash
 	parsedRequest.command = &buffer[firstSlashPosition + 1]; 
 	int secondSlashPosition = strstr(parsedRequest.command, "/") - parsedRequest.command;
@@ -146,22 +147,13 @@ void Get(const char* command, const char* parameter)
 {
 	PrintHttpHeader("200 OK");
 	
-	//const char *commandKeyValues[2][2] = {{"Temp", temperature},{}};
-	
 	if (CompareStrings("Temp", command))
 	{
 		client.print(temperature, 1);
 	}
 	else if (CompareStrings("TempString", command))
 	{
-		char buf[6];
-		itoa(temperature * 10, buf, 10);
-		int tempLen = strlen(buf);
-		buf[tempLen + 1] = buf[tempLen];
-		buf[tempLen] = buf[tempLen - 1];
-		buf[tempLen - 1] = '.';
-
-		client.print(buf);
+		client.print(FloatToString(temperature));
 	}
 	else if (CompareStrings("Humidity", command)) 
 	{
@@ -175,7 +167,7 @@ void Get(const char* command, const char* parameter)
 	{
 		client.print(freeRam());
 	}
-	else
+	else if (CompareStrings("ResourceDirectory", command))
 	{
 		client.print("Resource Directory:<br><br>Get: Temp, GoalTemp, Humidity, Status<br>Put: GoalTemp");
 	}
@@ -196,6 +188,19 @@ void Put(const char* command, const char* parameter)
 bool CompareStrings(const char* one, const char* two)
 {
 	return strcmp(one, two) == 0;
+}
+
+char* FloatToString(float input)
+{
+	char buffer[6];
+	
+	itoa(input * 10, buffer, 10);
+	int inputLength = strlen(buffer);
+	buffer[inputLength + 1] = buffer[inputLength];
+	buffer[inputLength] = buffer[inputLength - 1];
+	buffer[inputLength - 1] = '.';
+
+	return buffer;
 }
 	
 void PrintHttpHeader(const char* code)
