@@ -4,10 +4,8 @@
 #include "TimerOne.h"
 #include "Structs.h"
 
-#define maxBufferLength 120
-#define DhtUpdateInterval 3000000
-
 // ************ Temp/Humidity Probe **************
+#define DhtUpdateInterval 3000000 // how often the temp probe's values are used to update global variables
 DHT dht;
 float currentTemperature;
 float goalTemperature;
@@ -15,13 +13,18 @@ float currentHumidity;
 const char* dhtStatus;
 
 // ************ Thermostat ************
+#define temperatureHysteresis 2 // the amount above or below a threshold that is allowed
+#define minRunTime 600000 // cooling minimum runtime allowed (prevent short cycles)
+#define minOffTime 180000 //cooling minimum off time before can run again (protect compressor)
 bool isFanRunning;
 bool isHeatEnabled;
 bool isHeatRunning;
 bool isCoolEnabled;
 bool isCoolRunning;
+unsigned long lastStateChange;
 
 // ************ Client/Server ************
+#define maxBufferLength 120
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 1, 177);
 EthernetServer server(80);
@@ -47,6 +50,7 @@ void setup()
 	
 	// DHT-22 needs a delay before first read
 	delay(1000);
+	lastStateChange = millis();
 	
 	Timer1.initialize(DhtUpdateInterval);
 	Timer1.attachInterrupt(PerformPeriodicThermostatUpdate);
@@ -195,6 +199,10 @@ void PerformGet(const char* command, const char* parameter)
 	{
 		client.print(freeRam());
 	}
+	else if (CompareStrings("TimeInCurrentState", command))
+	{
+		client.print(TimeInCurrentState());
+	}
 	else if (CompareStrings("ResourceDirectory", command))
 	{
 		client.print("Resource Directory:<br><br>Get: Temp, GoalTemperature, Humidity, Status<br>Put: GoalTemperature");
@@ -203,9 +211,6 @@ void PerformGet(const char* command, const char* parameter)
 	{
 		client.print("404");
 	}
-	
-	//digitalWrite(13, HIGH);
-	//digitalWrite(12, HIGH); 
 }
 	
 void PerformPut(const char* command, const char* parameter)
@@ -217,9 +222,15 @@ void PerformPut(const char* command, const char* parameter)
 		goalTemperature = atof(parameter);
 		client.print(goalTemperature);
 	}
-	
-	//digitalWrite(13, LOW);
-	//digitalWrite(12, LOW); 
+	else if (CompareStrings("ResetTimeInCurrentState", command))
+	{
+		lastStateChange = millis();
+	}
+}
+
+unsigned long TimeInCurrentState()
+{
+	return millis() - lastStateChange;
 }
 	
 bool CompareStrings(const char* one, const char* two)

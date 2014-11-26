@@ -24,6 +24,7 @@ namespace ArduinoThermAccessor
 				"/Status/",
 				"Humidity",
 				"/FreeMemory/",
+				"/TimeInCurrentState/",
 				"/ResourceDirectory/",
 				"/else/"
 			};
