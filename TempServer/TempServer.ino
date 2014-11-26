@@ -7,21 +7,29 @@
 #define maxBufferLength 120
 #define DhtUpdateInterval 3000000
 
+// ************ Temp/Humidity Probe **************
 DHT dht;
-float goalTemp;
-float humidity;
-float temperature;
+float currentTemperature;
+float goalTemperature;
+float currentHumidity;
 const char* dhtStatus;
 
+// ************ Thermostat ************
+bool isFanRunning;
+bool isHeatEnabled;
+bool isHeatRunning;
+bool isCoolEnabled;
+bool isCoolRunning;
+
+// ************ Client/Server ************
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 1, 177);
 EthernetServer server(80);
 EthernetClient client;
 
+// ************ Declarations ************
 typedef void (*actionMethod)(const char*, const char*);
-
 void GetRequest(char *);
-
 void ParseReceivedRequest(const char*, ParsedRequest &);
 
 void setup()
@@ -39,7 +47,10 @@ void setup()
 	delay(1000);
 	
 	Timer1.initialize(DhtUpdateInterval);
-	Timer1.attachInterrupt(UpdateTempValues);
+	Timer1.attachInterrupt(PerformPeriodicThermostatUpdate);
+	
+	pinMode(13, OUTPUT);
+	pinMode(12, OUTPUT);
 }
 
 void loop()
@@ -121,11 +132,11 @@ void PerformRequestedCommand(ParsedRequest & parsedRequest)
 	
 	if (CompareStrings(parsedRequest.httpMethod, "GET"))
 	{
-		action = &Get;
+		action = &PerformGet;
 	}
 	else if (CompareStrings(parsedRequest.httpMethod, "PUT"))
 	{
-		action = &Put;
+		action = &PerformPut;
 	}
 	else
 	{
@@ -136,28 +147,43 @@ void PerformRequestedCommand(ParsedRequest & parsedRequest)
 	action(parsedRequest.command, parsedRequest.parameter);
 }
 
-void UpdateTempValues()
+void PerformPeriodicThermostatUpdate()
 {
+	// ***************** Update global temperature probe values *****************
 	dhtStatus = dht.getStatusString();
-	humidity = dht.getHumidity();
-	temperature = dht.toFahrenheit(dht.getTemperature());
+	currentHumidity = dht.getHumidity();
+	currentTemperature = dht.toFahrenheit(dht.getTemperature());
+	
+	// ***************** Perform Thermostat Functions *****************
+	if (goalTemperature > currentTemperature)
+	{
+		digitalWrite(13, HIGH);
+		digitalWrite(12, LOW); 
+		Serial.println("Heat Up");
+	}
+	else if (goalTemperature < currentTemperature)
+	{
+		digitalWrite(13, LOW); 
+		digitalWrite(12, HIGH);
+		Serial.println("Cool down");
+	}
 }
 
-void Get(const char* command, const char* parameter)
+void PerformGet(const char* command, const char* parameter)
 {
 	PrintHttpHeader("200 OK");
 	
-	if (CompareStrings("Temp", command))
+	if (CompareStrings("Temperature", command))
 	{
-		client.print(temperature, 1);
+		client.print(currentTemperature, 1);
 	}
-	else if (CompareStrings("TempString", command))
+	else if (CompareStrings("GoalTemperature", command)) 
 	{
-		client.print(FloatToString(temperature));
+		client.print(goalTemperature, 1);
 	}
 	else if (CompareStrings("Humidity", command)) 
 	{
-		client.print(humidity, 1);
+		client.print(currentHumidity, 1);
 	}
 	else if (CompareStrings("Status", command))
 	{
@@ -169,19 +195,22 @@ void Get(const char* command, const char* parameter)
 	}
 	else if (CompareStrings("ResourceDirectory", command))
 	{
-		client.print("Resource Directory:<br><br>Get: Temp, GoalTemp, Humidity, Status<br>Put: GoalTemp");
+		client.print("Resource Directory:<br><br>Get: Temp, GoalTemperature, Humidity, Status<br>Put: GoalTemperature");
+	}
+	else
+	{
+		client.print("404");
 	}
 }
 	
-void Put(const char* command, const char* parameter)
+void PerformPut(const char* command, const char* parameter)
 {
 	PrintHttpHeader("200 OK");
 	
-	if (CompareStrings("GoalTemp", command))
+	if (CompareStrings("GoalTemperature", command))
 	{
-		goalTemp = atof(parameter);
-		
-		client.print(goalTemp);
+		goalTemperature = atof(parameter);
+		client.print(goalTemperature);
 	}
 }
 	
@@ -203,10 +232,10 @@ char* FloatToString(float input)
 	return buffer;
 }
 	
-void PrintHttpHeader(const char* code)
+void PrintHttpHeader(const char* statusCode)
 {
 	client.print("HTTP/1.1 ");
-	client.println(code);
+	client.println(statusCode);
 	client.println("Content-Type: text/html");
 	client.println("Connection: close");  // the connection will be closed after completion of the response
 	client.println(); 
@@ -219,4 +248,3 @@ int freeRam()
 	int v;
 	return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
 }
-		

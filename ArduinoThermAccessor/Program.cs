@@ -19,11 +19,12 @@ namespace ArduinoThermAccessor
 
 			List<string> methods = new List<string>
 			{
-				"/TempString/",
-				"/Temp/",
+				"/Temperature/",
+				"/GoalTemperature/",
 				"/Status/",
 				"Humidity",
 				"/FreeMemory/",
+				"/ResourceDirectory/",
 				"/else/"
 			};
 
