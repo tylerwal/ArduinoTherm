@@ -14,8 +14,9 @@ const char* dhtStatus;
 
 // ************ Thermostat ************
 #define temperatureHysteresis 2 // the amount above or below a threshold that is allowed
-#define minRunTime 600000 // cooling minimum runtime allowed (prevent short cycles)
-#define minOffTime 180000 //cooling minimum off time before can run again (protect compressor)
+#define minRunTime 420000 // cooling minimum runtime allowed (prevent short cycles)
+#define minOffTime 420000 // cooling minimum off time before can run again (protect compressor)
+bool isFanEnabled;
 bool isFanRunning;
 bool isHeatEnabled;
 bool isHeatRunning;
