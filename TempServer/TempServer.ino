@@ -2,7 +2,7 @@
 #include <Ethernet.h>
 #include "DHT.h"
 #include "TimerOne.h"
-#include "Structs.h"
+#include "Externals.h"
 
 // ************ Temp/Humidity Probe **************
 #define DhtUpdateInterval 3000000 // how often the temp probe's values are used to update global variables
@@ -22,7 +22,9 @@ bool isHeatEnabled;
 bool isHeatRunning;
 bool isCoolEnabled;
 bool isCoolRunning;
-unsigned long lastStateChange;
+//unsigned long lastStateChange;
+//HvacState hvacState;
+SystemState systemState;
 
 // ************ Client/Server ************
 #define maxBufferLength 120
@@ -51,7 +53,9 @@ void setup()
 	
 	// DHT-22 needs a delay before first read
 	delay(1000);
-	lastStateChange = millis();
+	//lastStateChange = millis();
+	systemState.StartTimeCurrentState = millis();
+	goalTemperature = 72.0; // set a default in case there is a restart
 	
 	Timer1.initialize(DhtUpdateInterval);
 	Timer1.attachInterrupt(PerformPeriodicThermostatUpdate);
@@ -162,13 +166,13 @@ void PerformPeriodicThermostatUpdate()
 	currentTemperature = dht.toFahrenheit(dht.getTemperature());
 	
 	// ***************** Perform Thermostat Functions *****************
-	if (goalTemperature > currentTemperature)
+	if ((goalTemperature > currentTemperature) && !isHeatRunning)
 	{
 		digitalWrite(9, HIGH);
 		digitalWrite(8, LOW); 
 		Serial.println("Heat Up");
 	}
-	else if (goalTemperature < currentTemperature)
+	else if ((goalTemperature < currentTemperature) && !isCoolRunning)
 	{
 		digitalWrite(9, LOW); 
 		digitalWrite(8, HIGH);
@@ -225,13 +229,15 @@ void PerformPut(const char* command, const char* parameter)
 	}
 	else if (CompareStrings("ResetTimeInCurrentState", command))
 	{
-		lastStateChange = millis();
+		systemState.StartTimeCurrentState = millis();
+		//lastStateChange = millis();
 	}
 }
 
 unsigned long TimeInCurrentState()
 {
-	return millis() - lastStateChange;
+	//return millis() - lastStateChange;
+	return millis() - systemState.StartTimeCurrentState;
 }
 	
 bool CompareStrings(const char* one, const char* two)
