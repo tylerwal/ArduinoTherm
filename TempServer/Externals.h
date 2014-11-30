@@ -25,3 +25,9 @@ class SystemState
 		return millis() - this->StartTimeCurrentState;
 	}
 };
+
+class IState
+{
+	public:
+		virtual void GoalTemperatureReached() = 0;
+};
