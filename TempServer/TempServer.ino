@@ -55,6 +55,7 @@ void setup()
 	delay(1000);
 	//lastStateChange = millis();
 	systemState.StartTimeCurrentState = millis();
+	systemState.HvacCurrentState = Off;
 	goalTemperature = 72.0; // set a default in case there is a restart
 	
 	Timer1.initialize(DhtUpdateInterval);
@@ -171,12 +172,14 @@ void PerformPeriodicThermostatUpdate()
 		digitalWrite(9, HIGH);
 		digitalWrite(8, LOW); 
 		Serial.println("Heat Up");
+		systemState.HvacCurrentState = Heat;
 	}
 	else if ((goalTemperature < currentTemperature) && !isCoolRunning)
 	{
 		digitalWrite(9, LOW); 
 		digitalWrite(8, HIGH);
 		Serial.println("Cool down");
+		systemState.HvacCurrentState = Cool;
 	}
 }
 
