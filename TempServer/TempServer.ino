@@ -22,8 +22,6 @@ bool isHeatEnabled;
 bool isHeatRunning;
 bool isCoolEnabled;
 bool isCoolRunning;
-//unsigned long lastStateChange;
-//HvacState hvacState;
 SystemState systemState;
 
 // ************ Client/Server ************
@@ -53,7 +51,7 @@ void setup()
 	
 	// DHT-22 needs a delay before first read
 	delay(1000);
-	//lastStateChange = millis();
+
 	systemState.StartTimeCurrentState = millis();
 	systemState.HvacCurrentState = Off;
 	goalTemperature = 72.0; // set a default in case there is a restart
@@ -209,7 +207,7 @@ void PerformGet(const char* command, const char* parameter)
 	}
 	else if (CompareStrings("TimeInCurrentState", command))
 	{
-		client.print(TimeInCurrentState());
+		client.print(systemState.TimeInCurrentState());
 	}
 	else if (CompareStrings("ResourceDirectory", command))
 	{
@@ -233,15 +231,15 @@ void PerformPut(const char* command, const char* parameter)
 	else if (CompareStrings("ResetTimeInCurrentState", command))
 	{
 		systemState.StartTimeCurrentState = millis();
-		//lastStateChange = millis();
 	}
 }
 
+/*
 unsigned long TimeInCurrentState()
 {
-	//return millis() - lastStateChange;
 	return millis() - systemState.StartTimeCurrentState;
 }
+*/
 	
 bool CompareStrings(const char* one, const char* two)
 {

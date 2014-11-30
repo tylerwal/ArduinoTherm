@@ -14,8 +14,14 @@ enum HvacState
   EmergencyHeat
 };
 
-struct SystemState
+class SystemState
 {
+  public:
 	unsigned long StartTimeCurrentState;
-	HvacState HvacCurrentState;;
+	HvacState HvacCurrentState;
+
+    unsigned long TimeInCurrentState()
+	{
+		return millis() - this->StartTimeCurrentState;
+	}
 };
