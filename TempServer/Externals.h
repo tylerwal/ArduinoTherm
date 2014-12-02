@@ -26,8 +26,81 @@ class SystemState
 	}
 };
 
+class Thermostat
+{
+	CoolState coolState;
+	HeatState heatState;
+	OffState offState;
+	EmergencyHeatState emergencyHeatState;
+	IState state;
+};
+
 class IState
 {
 	public:
-		virtual void GoalTemperatureReached() = 0;
+		virtual void TemperatureEqualsGoal() = 0;
+		virtual void TemperatureGreaterThanGoal() = 0;
+		virtual void TemperatureLessThanGoal() = 0;
+};
+
+class CoolState: public IState
+{
+	public:
+		void TemperatureEqualsGoal()
+		{ 
+		}
+		void TemperatureGreaterThanGoal()
+		{ 
+		}
+		void TemperatureLessThanGoal()
+		{ 
+		}
+};
+
+class HeatState: public IState
+{
+	public:
+		void TemperatureEqualsGoal()
+		{ 
+		}
+		void TemperatureGreaterThanGoal()
+		{ 
+		}
+		void TemperatureLessThanGoal()
+		{ 
+		}
+};
+
+class OffState: public IState
+{
+	private:
+		Thermostat thermostat;
+	public:
+		OffState(Thermostat tstat)
+		{
+			thermostat = tstat;
+		}
+		void TemperatureEqualsGoal()
+		{ 
+		}
+		void TemperatureGreaterThanGoal()
+		{ 
+		}
+		void TemperatureLessThanGoal()
+		{ 
+		}
+};
+
+class EmergencyHeatState: public IState
+{
+	public:
+		void TemperatureEqualsGoal()
+		{ 
+		}
+		void TemperatureGreaterThanGoal()
+		{ 
+		}
+		void TemperatureLessThanGoal()
+		{ 
+		}
 };

@@ -61,6 +61,8 @@ void setup()
 
 	pinMode(8, OUTPUT);
 	pinMode(9, OUTPUT);
+	
+	CoolState coolState;
 }
 
 void loop()
