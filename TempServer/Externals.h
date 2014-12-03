@@ -1,3 +1,6 @@
+#ifndef EXTERNALS_H
+#define EXTERNALS_H
+
 struct ParsedRequest
 {
 	char* httpMethod;
@@ -26,6 +29,7 @@ class SystemState
 	}
 };
 
+/* 
 class Thermostat
 {
 	CoolState coolState;
@@ -104,3 +108,6 @@ class EmergencyHeatState: public IState
 		{ 
 		}
 };
+ */
+ 
+ #endif /* EXTERNALS_H */
