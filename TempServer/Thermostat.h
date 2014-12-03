@@ -7,21 +7,21 @@
   #include <Arduino.h>
 #endif
 
-float currentTemperature;
-float goalTemperature;
-float currentHumidity;
-const char* dhtStatus;
+extern float currentTemperature;
+extern float goalTemperature;
+extern float currentHumidity;
+extern const char* dhtStatus;
 
 #define temperatureHysteresis 2 // the amount above or below a threshold that is allowed
 #define minRunTime 420000 // cooling minimum runtime allowed (prevent short cycles)
 #define minOffTime 420000 // cooling minimum off time before can run again (protect compressor)
-bool isFanEnabled;
-bool isFanRunning;
-bool isHeatEnabled;
-bool isHeatRunning;
-bool isCoolEnabled;
-bool isCoolRunning;
-/* SystemState systemState; */
+extern bool isFanEnabled;
+extern bool isFanRunning;
+extern bool isHeatEnabled;
+extern bool isHeatRunning;
+extern bool isCoolEnabled;
+extern bool isCoolRunning;
+/* extern SystemState systemState; */
 
 enum HvacState 
 {
@@ -38,7 +38,7 @@ class SystemState
 		unsigned long StartTimeCurrentState;
 		HvacState HvacCurrentState;
 
-		unsigned long TimeInCurrentState() { return millis() - this->StartTimeCurrentState;	}
+		unsigned long TimeInCurrentState(); // { return millis() - this->StartTimeCurrentState;	}
 };
 
 class IState

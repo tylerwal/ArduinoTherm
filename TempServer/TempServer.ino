@@ -2,16 +2,16 @@
 #include <Ethernet.h>
 #include "DHT.h"
 #include "TimerOne.h"
-#include "Externals.h"
+#include "Thermostat.h"
 #include "HttpServer.h"
 
 // ************ Temp/Humidity Probe **************
 #define DhtUpdateInterval 3000000 // how often the temp probe's values are used to update global variables
 DHT dht;
-/* extern float currentTemperature;
-float goalTemperature;
-float currentHumidity;
-const char* dhtStatus; */
+extern float currentTemperature;
+extern float goalTemperature;
+extern float currentHumidity;
+extern const char* dhtStatus;
 
 // ************ Thermostat ************
 /* #define temperatureHysteresis 2 // the amount above or below a threshold that is allowed

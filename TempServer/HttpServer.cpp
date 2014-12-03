@@ -2,7 +2,7 @@
 #include <Ethernet.h>
 #include "HttpServer.h"
 #include "Utilities.h"
-#include "Externals.h"
+#include "Thermostat.h"
 
 void GetHttpRequest(EthernetClient client, char* buffer)
 {
@@ -116,7 +116,7 @@ void PerformGet(EthernetClient client, const char* command, const char* paramete
 	}
 	else if (CompareStrings("TimeInCurrentState", command))
 	{
-		//client.print(systemState.TimeInCurrentState());
+		/* client.print(systemState.TimeInCurrentState()); */
 	}
 	else if (CompareStrings("ResourceDirectory", command))
 	{

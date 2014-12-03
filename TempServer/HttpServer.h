@@ -9,6 +9,12 @@
 
 #define maxBufferLength 120
 
+extern float currentTemperature;
+extern float goalTemperature;
+extern float currentHumidity;
+extern const char* dhtStatus;
+/* extern SystemState systemState; */
+
 struct ParsedRequest
 {
 	char* httpMethod;
