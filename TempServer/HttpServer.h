@@ -16,37 +16,18 @@ struct ParsedRequest
 	char* parameter;
 };
 
+typedef void (*actionMethod)(EthernetClient client, const char*, const char*);
+
 void GetHttpRequest(EthernetClient client, char* buffer);
 
-/* void GetHttpRequest(EthernetClient client, char* buffer)
-{
-	int bufferLength = 0;
-	
-	while (client.connected())
-	{
-		if (client.available())
-		{
-			char singleChar = client.read();
-			
-			if (singleChar == '\n')
-			{
-				break;
-			}
-			else
-			{
-				if (bufferLength < maxBufferLength)
-				{
-                    buffer[bufferLength++] = singleChar;
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-	}
-	
-    buffer[bufferLength++] = '\0';
-} */
+void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest);
+
+void PrintHttpHeader(EthernetClient client, const char* statusCode);
+
+void PerformRequestedCommand(EthernetClient client, ParsedRequest & parsedRequest);
+
+void PerformGet(EthernetClient client, const char* command, const char* parameter);
+
+void PerformPut(EthernetClient client, const char* command, const char* parameter);
 
 #endif /* HTTPSERVER_H */

@@ -8,13 +8,13 @@
 // ************ Temp/Humidity Probe **************
 #define DhtUpdateInterval 3000000 // how often the temp probe's values are used to update global variables
 DHT dht;
-float currentTemperature;
+/* extern float currentTemperature;
 float goalTemperature;
 float currentHumidity;
-const char* dhtStatus;
+const char* dhtStatus; */
 
 // ************ Thermostat ************
-#define temperatureHysteresis 2 // the amount above or below a threshold that is allowed
+/* #define temperatureHysteresis 2 // the amount above or below a threshold that is allowed
 #define minRunTime 420000 // cooling minimum runtime allowed (prevent short cycles)
 #define minOffTime 420000 // cooling minimum off time before can run again (protect compressor)
 bool isFanEnabled;
@@ -22,8 +22,8 @@ bool isFanRunning;
 bool isHeatEnabled;
 bool isHeatRunning;
 bool isCoolEnabled;
-bool isCoolRunning;
-SystemState systemState;
+bool isCoolRunning; */
+extern SystemState systemState;
 
 // ************ Client/Server ************
 /* #define maxBufferLength 120 */
@@ -33,9 +33,9 @@ EthernetServer server(80);
 EthernetClient client;
 
 // ************ Declarations ************
-typedef void (*actionMethod)(const char*, const char*);
-void GetRequest(char *);
-void ParseReceivedRequest(const char*, ParsedRequest &);
+/* typedef void (*actionMethod)(const char*, const char*); */
+//void GetRequest(char *);
+//void ParseReceivedRequest(const char*, ParsedRequest &);
 
 void setup()
 {
@@ -77,7 +77,7 @@ void loop()
 		ParsedRequest parsedRequest;		
 		ParseReceivedRequest(buffer, parsedRequest);
 		
-		PerformRequestedCommand(parsedRequest);
+		PerformRequestedCommand(client, parsedRequest);
 		
 		client.stop();
 	}
@@ -114,7 +114,7 @@ void loop()
     buffer[bufferLength++] = '\0';
 } */
 
-// Parses the buffer into the HTTP method (request), command, and paramter variables
+/* // Parses the buffer into the HTTP method (request), command, and paramter variables
 // Received buffer template: "METHOD /command/parameter HTTP/1.1"
 void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 {
@@ -138,8 +138,9 @@ void ParseReceivedRequest(char* buffer, ParsedRequest & parsedRequest)
 	// set parameter equal to the reference of 1 character after the slash
 	parsedRequest.parameter = &parsedRequest.command[secondSlashPosition + 1]; 
 }
+ */
 
-void PerformRequestedCommand(ParsedRequest & parsedRequest)
+/* void PerformRequestedCommand(ParsedRequest & parsedRequest)
 {
 	actionMethod action;
 	
@@ -153,13 +154,13 @@ void PerformRequestedCommand(ParsedRequest & parsedRequest)
 	}
 	else
 	{
-		PrintHttpHeader("404 Not found");
+		PrintHttpHeader(client, "404 Not found");
 		return;
 	}
 	
 	action(parsedRequest.command, parsedRequest.parameter);
 }
-
+ */
 void PerformPeriodicThermostatUpdate()
 {
 	// ***************** Update global temperature probe values *****************
@@ -184,9 +185,9 @@ void PerformPeriodicThermostatUpdate()
 	}
 }
 
-void PerformGet(const char* command, const char* parameter)
+/* void PerformGet(const char* command, const char* parameter)
 {
-	PrintHttpHeader("200 OK");
+	PrintHttpHeader(client, "200 OK");
 	
 	if (CompareStrings("Temperature", command))
 	{
@@ -224,7 +225,7 @@ void PerformGet(const char* command, const char* parameter)
 	
 void PerformPut(const char* command, const char* parameter)
 {
-	PrintHttpHeader("200 OK");
+	PrintHttpHeader(client, "200 OK");
 	
 	if (CompareStrings("GoalTemperature", command))
 	{
@@ -236,7 +237,7 @@ void PerformPut(const char* command, const char* parameter)
 		systemState.StartTimeCurrentState = millis();
 	}
 }
-
+ */
 /*
 unsigned long TimeInCurrentState()
 {
@@ -244,7 +245,7 @@ unsigned long TimeInCurrentState()
 }
 */
 	
-bool CompareStrings(const char* one, const char* two)
+/* bool CompareStrings(const char* one, const char* two)
 {
 	return strcmp(one, two) == 0;
 }
@@ -261,20 +262,21 @@ char* FloatToString(float input)
 
 	return buffer;
 }
-	
-void PrintHttpHeader(const char* statusCode)
+	 */
+/* void PrintHttpHeader(const char* statusCode)
 {
 	client.print("HTTP/1.1 ");
 	client.println(statusCode);
 	client.println("Content-Type: text/html");
 	client.println("Connection: close");  // the connection will be closed after completion of the response
 	client.println(); 
-}
+} */
 
-// code @ https://learn.adafruit.com/memories-of-an-arduino/measuring-free-memory
+/* // code @ https://learn.adafruit.com/memories-of-an-arduino/measuring-free-memory
 int freeRam()
 {
 	extern int __heap_start, *__brkval;
 	int v;
 	return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
 }
+ */
