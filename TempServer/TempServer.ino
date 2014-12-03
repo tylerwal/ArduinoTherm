@@ -3,6 +3,7 @@
 #include "DHT.h"
 #include "TimerOne.h"
 #include "Externals.h"
+#include "HttpServer.h"
 
 // ************ Temp/Humidity Probe **************
 #define DhtUpdateInterval 3000000 // how often the temp probe's values are used to update global variables
@@ -25,7 +26,7 @@ bool isCoolRunning;
 SystemState systemState;
 
 // ************ Client/Server ************
-#define maxBufferLength 120
+/* #define maxBufferLength 120 */
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 1, 177);
 EthernetServer server(80);
@@ -82,7 +83,7 @@ void loop()
 	}
 }
 
-void GetHttpRequest(EthernetClient client, char* buffer)
+/* void GetHttpRequest(EthernetClient client, char* buffer)
 {
 	int bufferLength = 0;
 	
@@ -111,7 +112,7 @@ void GetHttpRequest(EthernetClient client, char* buffer)
 	}
 	
     buffer[bufferLength++] = '\0';
-}
+} */
 
 // Parses the buffer into the HTTP method (request), command, and paramter variables
 // Received buffer template: "METHOD /command/parameter HTTP/1.1"

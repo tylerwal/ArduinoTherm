@@ -1,42 +1,28 @@
 #ifndef EXTERNALS_H
 #define EXTERNALS_H
 
-struct ParsedRequest
-{
-	char* httpMethod;
-	char* command;
-	char* parameter;
-};
+#if ARDUINO < 100
+  #include <WProgram.h>
+#else
+  #include <Arduino.h>
+#endif
 
 enum HvacState 
 {
-  Off,
-  Fan,
-  Heat,
-  Cool,
-  EmergencyHeat
+	Off,
+	Fan,
+	Heat,
+	Cool,
+	EmergencyHeat
 };
 
 class SystemState
 {
-  public:
-	unsigned long StartTimeCurrentState;
-	HvacState HvacCurrentState;
+	public:
+		unsigned long StartTimeCurrentState;
+		HvacState HvacCurrentState;
 
-    unsigned long TimeInCurrentState()
-	{
-		return millis() - this->StartTimeCurrentState;
-	}
-};
-
-/* 
-class Thermostat
-{
-	CoolState coolState;
-	HeatState heatState;
-	OffState offState;
-	EmergencyHeatState emergencyHeatState;
-	IState state;
+		unsigned long TimeInCurrentState() { return millis() - this->StartTimeCurrentState;	}
 };
 
 class IState
@@ -47,6 +33,17 @@ class IState
 		virtual void TemperatureLessThanGoal() = 0;
 };
 
+class Thermostat
+{
+	/* CoolState coolState;
+	HeatState heatState;
+	OffState offState;
+	EmergencyHeatState emergencyHeatState;*/
+	IState * state; 
+};
+ 
+
+/*
 class CoolState: public IState
 {
 	public:
