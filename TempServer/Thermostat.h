@@ -15,12 +15,12 @@ extern const char* dhtStatus;
 #define temperatureHysteresis 2 // the amount above or below a threshold that is allowed
 #define minRunTime 420000 // cooling minimum runtime allowed (prevent short cycles)
 #define minOffTime 420000 // cooling minimum off time before can run again (protect compressor)
-extern bool isFanEnabled;
+/* extern bool isFanEnabled;
 extern bool isFanRunning;
 extern bool isHeatEnabled;
 extern bool isHeatRunning;
 extern bool isCoolEnabled;
-extern bool isCoolRunning;
+extern bool isCoolRunning; */
 /* extern SystemState systemState; */
 
 enum HvacState 

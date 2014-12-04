@@ -116,7 +116,7 @@ void PerformGet(EthernetClient client, const char* command, const char* paramete
 	}
 	else if (CompareStrings("TimeInCurrentState", command))
 	{
-		/* client.print(systemState.TimeInCurrentState()); */
+		client.print(systemState.TimeInCurrentState());
 	}
 	else if (CompareStrings("ResourceDirectory", command))
 	{
@@ -139,6 +139,6 @@ void PerformPut(EthernetClient client, const char* command, const char* paramete
 	}
 	else if (CompareStrings("ResetTimeInCurrentState", command))
 	{
-		//systemState.StartTimeCurrentState = millis();
+		systemState.StartTimeCurrentState = millis();
 	}
 }

@@ -12,6 +12,7 @@ bool isHeatEnabled;
 bool isHeatRunning;
 bool isCoolEnabled;
 bool isCoolRunning;
+
 SystemState systemState;
 
 unsigned long SystemState::TimeInCurrentState()
