@@ -7,10 +7,13 @@
   #include <Arduino.h>
 #endif
 
+#include "DHT.h"
+
 extern float currentTemperature;
 extern float goalTemperature;
 extern float currentHumidity;
 extern const char* dhtStatus;
+extern DHT dht;
 
 #define temperatureHysteresis 2 // the amount above or below a threshold that is allowed
 #define minRunTime 420000 // cooling minimum runtime allowed (prevent short cycles)
@@ -22,6 +25,8 @@ extern bool isHeatRunning;
 extern bool isCoolEnabled;
 extern bool isCoolRunning; */
 /* extern SystemState systemState; */
+
+void PerformPeriodicThermostatUpdate();
 
 enum HvacState 
 {
