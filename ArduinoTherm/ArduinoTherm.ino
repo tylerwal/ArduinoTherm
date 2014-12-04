@@ -14,28 +14,21 @@ extern float currentHumidity;
 extern const char* dhtStatus;
 
 // ************ Thermostat ************
-/* #define temperatureHysteresis 2 // the amount above or below a threshold that is allowed
-#define minRunTime 420000 // cooling minimum runtime allowed (prevent short cycles)
-#define minOffTime 420000 // cooling minimum off time before can run again (protect compressor)
+/* 
 bool isFanEnabled;
 bool isFanRunning;
-bool isHeatEnabled; */
+bool isHeatEnabled; 
+*/
 extern bool isHeatRunning;
 /* bool isCoolEnabled; */
 extern bool isCoolRunning;
 extern SystemState systemState;
 
 // ************ Client/Server ************
-/* #define maxBufferLength 120 */
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 1, 177);
 EthernetServer server(80);
 EthernetClient client;
-
-// ************ Declarations ************
-/* typedef void (*actionMethod)(const char*, const char*); */
-//void GetRequest(char *);
-//void ParseReceivedRequest(const char*, ParsedRequest &);
 
 void setup()
 {
