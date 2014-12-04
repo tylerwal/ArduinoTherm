@@ -47,7 +47,9 @@ void setup()
 	delay(1000);
 
 	systemState.StartTimeCurrentState = millis();
-	systemState.HvacCurrentState = Off;
+	/* systemState.CurrentState = Off; */
+	systemState.SetState = Auto;
+
 	goalTemperature = 72.0; // set a default in case there is a restart
 	
 	Timer1.initialize(DhtUpdateInterval);

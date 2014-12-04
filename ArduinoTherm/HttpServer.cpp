@@ -118,6 +118,14 @@ void PerformGet(EthernetClient client, const char* command, const char* paramete
 	{
 		client.print(systemState.TimeInCurrentState());
 	}
+	else if (CompareStrings("CurrentState", command))
+	{
+		client.print(systemState.CurrentState);
+	}
+	else if (CompareStrings("SetState", command))
+	{
+		client.print(systemState.SetState);
+	}
 	else if (CompareStrings("ResourceDirectory", command))
 	{
 		client.print("Resource Directory:<br><br>Get: Temp, GoalTemperature, Humidity, Status<br>Put: GoalTemperature");
@@ -140,5 +148,10 @@ void PerformPut(EthernetClient client, const char* command, const char* paramete
 	else if (CompareStrings("ResetTimeInCurrentState", command))
 	{
 		systemState.StartTimeCurrentState = millis();
+	}
+	else if (CompareStrings("SetState", command))
+	{
+		systemState.SetState = (HvacState)atof(parameter);
+		client.print("State set.");
 	}
 }

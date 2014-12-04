@@ -31,6 +31,7 @@ void PerformPeriodicThermostatUpdate();
 enum HvacState 
 {
 	Off,
+	Auto,
 	Fan,
 	Heat,
 	Cool,
@@ -41,7 +42,8 @@ class SystemState
 {
 	public:
 		unsigned long StartTimeCurrentState;
-		HvacState HvacCurrentState;
+		HvacState CurrentState;
+		HvacState SetState;
 
 		unsigned long TimeInCurrentState(); // { return millis() - this->StartTimeCurrentState;	}
 };

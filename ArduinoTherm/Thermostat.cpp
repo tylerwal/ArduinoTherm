@@ -28,18 +28,25 @@ void PerformPeriodicThermostatUpdate()
 	currentTemperature = dht.toFahrenheit(dht.getTemperature());
 	
 	// ***************** Perform Thermostat Functions *****************
-	if ((goalTemperature > currentTemperature) && !isHeatRunning)
+	if ((goalTemperature > currentTemperature) && !isHeatRunning && (systemState.SetState == Auto || systemState.SetState == Heat))
 	{
 		digitalWrite(9, HIGH);
 		digitalWrite(8, LOW); 
 		Serial.println("Heat Up");
-		systemState.HvacCurrentState = Heat;
+		systemState.CurrentState = Heat;
 	}
-	else if ((goalTemperature < currentTemperature) && !isCoolRunning)
+	else if ((goalTemperature < currentTemperature) && !isCoolRunning && (systemState.SetState == Auto || systemState.SetState == Cool))
 	{
 		digitalWrite(9, LOW); 
 		digitalWrite(8, HIGH);
 		Serial.println("Cool down");
-		systemState.HvacCurrentState = Cool;
+		systemState.CurrentState = Cool;
+	}
+	else
+	{
+		digitalWrite(9, LOW); 
+		digitalWrite(8, LOW);
+		Serial.println("Off");
+		systemState.CurrentState = Off;
 	}
 }
