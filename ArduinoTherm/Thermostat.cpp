@@ -13,13 +13,9 @@ bool isHeatRunning;
 bool isCoolEnabled;
 bool isCoolRunning;
 
-Thermostat thermostat;
 
-unsigned long Thermostat::TimeInCurrentState()
-{
-	return millis() - this->StartTimeCurrentState;
-};
-
+CoolState coolState;
+Thermostat thermostat(&coolState);
 void PerformPeriodicThermostatUpdate()
 {
 	// ***************** Update global temperature probe values *****************
@@ -28,14 +24,14 @@ void PerformPeriodicThermostatUpdate()
 	currentTemperature = dht.toFahrenheit(dht.getTemperature());
 	
 	// ***************** Perform Thermostat Functions *****************
-	if ((goalTemperature > currentTemperature) && !isHeatRunning && (thermostat.SetState == Auto || thermostat.SetState == Heat))
+	if ((goalTemperature > currentTemperature) && !isHeatRunning && (thermostat.StateSetting == Auto || thermostat.StateSetting == Heat))
 	{
 		digitalWrite(9, HIGH);
 		digitalWrite(8, LOW); 
 		Serial.println("Heat Up");
 		thermostat.CurrentState = Heat;
 	}
-	else if ((goalTemperature < currentTemperature) && !isCoolRunning && (thermostat.SetState == Auto || thermostat.SetState == Cool))
+	else if ((goalTemperature < currentTemperature) && !isCoolRunning && (thermostat.StateSetting == Auto || thermostat.StateSetting == Cool))
 	{
 		digitalWrite(9, LOW); 
 		digitalWrite(8, HIGH);
@@ -50,3 +46,67 @@ void PerformPeriodicThermostatUpdate()
 		thermostat.CurrentState = Off;
 	}
 }
+
+/* ************* Thermostat ************* */
+
+Thermostat::Thermostat(CoolState * state) : coolState(state)
+{
+	//CoolState cstate;
+	//coolState = &cstate;
+	//offState = &(CoolState());
+	//coolState = &CoolState; //thermostat);
+/* 
+	currentState = CoolState(*this);
+	offState = CoolState(*this);
+	fanState = CoolState(*this);
+	heatState = CoolState(*this);
+	emergencyHeatState = CoolState(*this); */
+}; 
+
+unsigned long Thermostat::TimeInCurrentState()
+{
+	return millis() - this->StartTimeCurrentState;
+};
+
+void Thermostat::setCurrentState(IState * state)
+{
+	currentState = state;
+};
+
+IState * Thermostat::getCurrentState()
+{
+	return currentState;
+};
+
+IState * Thermostat::getOffState() 
+{
+	return offState;
+};
+IState * Thermostat::getFanState() 
+{ 
+	return fanState;
+};
+IState * Thermostat::getHeatState() 
+{ 
+	return heatState;
+};
+IState * Thermostat::getCoolState() 
+{ 
+	return coolState;
+};
+IState * Thermostat::getEmergencyHeatState() 
+{ 
+	return emergencyHeatState;
+};
+
+/* ************************** Various States ************************** */
+/* ************* Off State ************* */
+/* ************* Fan State ************* */
+/* ************* Heat State ************* */
+/* ************* Cool State ************* */
+//CoolState::CoolState(){}; //Thermostat * thermostat){};
+void CoolState::TemperatureEqualsGoal(){};
+void CoolState::TemperatureGreaterThanGoal(){};
+void CoolState::TemperatureLessThanGoal(){};
+void CoolState::Operate(){};
+/* ************* Emergency Heat State ************* */

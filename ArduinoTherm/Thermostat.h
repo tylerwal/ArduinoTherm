@@ -35,22 +35,23 @@ enum HvacState
 	Fan,
 	Heat,
 	Cool,
-	EmergencyHeat
+	EmergencyHeat,
+	AutoWithEmergencyHeat
 };
+
+class IState;
 
 class IThermostat
 {
-
-};
-
-class Thermostat
-{
 	public:
-		unsigned long StartTimeCurrentState;
-		HvacState CurrentState;
-		HvacState SetState;
-
-		unsigned long TimeInCurrentState(); // { return millis() - this->StartTimeCurrentState;	}
+		virtual void setCurrentState(IState * state) = 0;
+		virtual IState * getCurrentState() = 0;
+		
+		virtual IState * getOffState() = 0;
+		virtual IState * getFanState() = 0;
+		virtual IState * getHeatState() = 0;
+		virtual IState * getCoolState() = 0;
+		virtual IState * getEmergencyHeatState() = 0;
 };
 
 class IState
@@ -59,33 +60,56 @@ class IState
 		virtual void TemperatureEqualsGoal() = 0;
 		virtual void TemperatureGreaterThanGoal() = 0;
 		virtual void TemperatureLessThanGoal() = 0;
+		virtual void Operate() = 0;
+		
+		HvacState associatedHvacState;
 };
 
-class OldThermostat
+class CoolState;
+
+class Thermostat : IThermostat
 {
-	/* CoolState coolState;
-	HeatState heatState;
-	OffState offState;
-	EmergencyHeatState emergencyHeatState;*/
-	IState * state; 
-};
- 
+	private:
+		IState * currentState;
 
-/*
+		IState * offState;
+		IState * fanState;
+		IState * heatState;
+		CoolState * coolState;
+		IState * emergencyHeatState;
+	public:
+		Thermostat(CoolState * state);
+	
+		unsigned long StartTimeCurrentState;
+		unsigned long TimeInCurrentState();
+
+		// ******************** desired state ********************
+		HvacState StateSetting;
+
+		// ******************** current state ********************
+		HvacState CurrentState;
+	
+		void setCurrentState(IState * state);
+		IState * getCurrentState();
+		
+		IState * getOffState();
+		IState * getFanState();
+		IState * getHeatState();
+		IState * getCoolState();
+		IState * getEmergencyHeatState();
+};
+
 class CoolState: public IState
 {
 	public:
-		void TemperatureEqualsGoal()
-		{ 
-		}
-		void TemperatureGreaterThanGoal()
-		{ 
-		}
-		void TemperatureLessThanGoal()
-		{ 
-		}
+		//CoolState(); //Thermostat * thermostat);
+		void TemperatureEqualsGoal();
+		void TemperatureGreaterThanGoal();
+		void TemperatureLessThanGoal();
+		void Operate();
 };
 
+/*
 class HeatState: public IState
 {
 	public:

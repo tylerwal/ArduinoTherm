@@ -48,7 +48,7 @@ void setup()
 
 	thermostat.StartTimeCurrentState = millis();
 	/* thermostat.CurrentState = Off; */
-	thermostat.SetState = Auto;
+	thermostat.StateSetting = Auto;
 
 	goalTemperature = 72.0; // set a default in case there is a restart
 	
