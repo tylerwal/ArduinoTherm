@@ -24,7 +24,7 @@ extern bool isHeatEnabled;
 extern bool isHeatRunning;
 extern bool isCoolEnabled;
 extern bool isCoolRunning; */
-/* extern SystemState systemState; */
+/* extern Thermostat thermostat; */
 
 void PerformPeriodicThermostatUpdate();
 
@@ -38,7 +38,12 @@ enum HvacState
 	EmergencyHeat
 };
 
-class SystemState
+class IThermostat
+{
+
+};
+
+class Thermostat
 {
 	public:
 		unsigned long StartTimeCurrentState;
@@ -56,7 +61,7 @@ class IState
 		virtual void TemperatureLessThanGoal() = 0;
 };
 
-class Thermostat
+class OldThermostat
 {
 	/* CoolState coolState;
 	HeatState heatState;

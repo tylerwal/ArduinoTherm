@@ -22,7 +22,7 @@ bool isHeatEnabled;
 extern bool isHeatRunning;
 /* bool isCoolEnabled; */
 extern bool isCoolRunning;
-extern SystemState systemState;
+extern Thermostat thermostat;
 
 // ************ Client/Server ************
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
@@ -46,9 +46,9 @@ void setup()
 	// DHT-22 needs a delay before first read
 	delay(1000);
 
-	systemState.StartTimeCurrentState = millis();
-	/* systemState.CurrentState = Off; */
-	systemState.SetState = Auto;
+	thermostat.StartTimeCurrentState = millis();
+	/* thermostat.CurrentState = Off; */
+	thermostat.SetState = Auto;
 
 	goalTemperature = 72.0; // set a default in case there is a restart
 	

@@ -15,7 +15,7 @@ extern float currentTemperature;
 extern float goalTemperature;
 extern float currentHumidity;
 extern const char* dhtStatus;
-extern SystemState systemState;
+extern Thermostat thermostat;
 
 struct ParsedRequest
 {

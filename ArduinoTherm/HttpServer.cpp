@@ -116,15 +116,15 @@ void PerformGet(EthernetClient client, const char* command, const char* paramete
 	}
 	else if (CompareStrings("TimeInCurrentState", command))
 	{
-		client.print(systemState.TimeInCurrentState());
+		client.print(thermostat.TimeInCurrentState());
 	}
 	else if (CompareStrings("CurrentState", command))
 	{
-		client.print(systemState.CurrentState);
+		client.print(thermostat.CurrentState);
 	}
 	else if (CompareStrings("SetState", command))
 	{
-		client.print(systemState.SetState);
+		client.print(thermostat.SetState);
 	}
 	else if (CompareStrings("ResourceDirectory", command))
 	{
@@ -147,11 +147,11 @@ void PerformPut(EthernetClient client, const char* command, const char* paramete
 	}
 	else if (CompareStrings("ResetTimeInCurrentState", command))
 	{
-		systemState.StartTimeCurrentState = millis();
+		thermostat.StartTimeCurrentState = millis();
 	}
 	else if (CompareStrings("SetState", command))
 	{
-		systemState.SetState = (HvacState)atof(parameter);
+		thermostat.SetState = (HvacState)atof(parameter);
 		client.print("State set.");
 	}
 }

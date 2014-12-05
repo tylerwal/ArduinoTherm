@@ -13,9 +13,9 @@ bool isHeatRunning;
 bool isCoolEnabled;
 bool isCoolRunning;
 
-SystemState systemState;
+Thermostat thermostat;
 
-unsigned long SystemState::TimeInCurrentState()
+unsigned long Thermostat::TimeInCurrentState()
 {
 	return millis() - this->StartTimeCurrentState;
 };
@@ -28,25 +28,25 @@ void PerformPeriodicThermostatUpdate()
 	currentTemperature = dht.toFahrenheit(dht.getTemperature());
 	
 	// ***************** Perform Thermostat Functions *****************
-	if ((goalTemperature > currentTemperature) && !isHeatRunning && (systemState.SetState == Auto || systemState.SetState == Heat))
+	if ((goalTemperature > currentTemperature) && !isHeatRunning && (thermostat.SetState == Auto || thermostat.SetState == Heat))
 	{
 		digitalWrite(9, HIGH);
 		digitalWrite(8, LOW); 
 		Serial.println("Heat Up");
-		systemState.CurrentState = Heat;
+		thermostat.CurrentState = Heat;
 	}
-	else if ((goalTemperature < currentTemperature) && !isCoolRunning && (systemState.SetState == Auto || systemState.SetState == Cool))
+	else if ((goalTemperature < currentTemperature) && !isCoolRunning && (thermostat.SetState == Auto || thermostat.SetState == Cool))
 	{
 		digitalWrite(9, LOW); 
 		digitalWrite(8, HIGH);
 		Serial.println("Cool down");
-		systemState.CurrentState = Cool;
+		thermostat.CurrentState = Cool;
 	}
 	else
 	{
 		digitalWrite(9, LOW); 
 		digitalWrite(8, LOW);
 		Serial.println("Off");
-		systemState.CurrentState = Off;
+		thermostat.CurrentState = Off;
 	}
 }
