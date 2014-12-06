@@ -60,12 +60,13 @@ class IState
 		virtual void TemperatureEqualsGoal() = 0;
 		virtual void TemperatureGreaterThanGoal() = 0;
 		virtual void TemperatureLessThanGoal() = 0;
-		virtual void Operate() = 0;
+		//virtual void Operate() = 0;
 		
 		HvacState associatedHvacState;
 };
 
 class CoolState;
+class HeatState;
 
 class Thermostat : IThermostat
 {
@@ -75,10 +76,10 @@ class Thermostat : IThermostat
 		IState * offState;
 		IState * fanState;
 		IState * heatState;
-		CoolState * coolState;
+		IState * coolState;
 		IState * emergencyHeatState;
 	public:
-		Thermostat(CoolState * state);
+		Thermostat(); //IState * cool);
 	
 		unsigned long StartTimeCurrentState;
 		unsigned long TimeInCurrentState();
@@ -102,28 +103,22 @@ class Thermostat : IThermostat
 class CoolState: public IState
 {
 	public:
-		//CoolState(); //Thermostat * thermostat);
+		CoolState(IThermostat * thermostat);
 		void TemperatureEqualsGoal();
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
-		void Operate();
+		//void Operate();
 };
 
-/*
+
 class HeatState: public IState
 {
 	public:
-		void TemperatureEqualsGoal()
-		{ 
-		}
-		void TemperatureGreaterThanGoal()
-		{ 
-		}
-		void TemperatureLessThanGoal()
-		{ 
-		}
+		void TemperatureEqualsGoal();
+		void TemperatureGreaterThanGoal();
+		void TemperatureLessThanGoal();
 };
-
+/*
 class OffState: public IState
 {
 	private:

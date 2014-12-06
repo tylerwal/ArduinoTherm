@@ -14,8 +14,9 @@ bool isCoolEnabled;
 bool isCoolRunning;
 
 
-CoolState coolState;
-Thermostat thermostat(&coolState);
+//CoolState coolState;
+Thermostat thermostat; //&coolState);
+
 void PerformPeriodicThermostatUpdate()
 {
 	// ***************** Update global temperature probe values *****************
@@ -49,9 +50,9 @@ void PerformPeriodicThermostatUpdate()
 
 /* ************* Thermostat ************* */
 
-Thermostat::Thermostat(CoolState * state) : coolState(state)
+Thermostat::Thermostat() //IState * cool) : coolState(cool)
 {
-	//CoolState cstate;
+	CoolState cstate(this);
 	//coolState = &cstate;
 	//offState = &(CoolState());
 	//coolState = &CoolState; //thermostat);
@@ -103,10 +104,13 @@ IState * Thermostat::getEmergencyHeatState()
 /* ************* Off State ************* */
 /* ************* Fan State ************* */
 /* ************* Heat State ************* */
+void HeatState::TemperatureEqualsGoal(){};
+void HeatState::TemperatureGreaterThanGoal(){};
+void HeatState::TemperatureLessThanGoal(){};
 /* ************* Cool State ************* */
-//CoolState::CoolState(){}; //Thermostat * thermostat){};
+CoolState::CoolState(IThermostat * thermostat){};
 void CoolState::TemperatureEqualsGoal(){};
 void CoolState::TemperatureGreaterThanGoal(){};
 void CoolState::TemperatureLessThanGoal(){};
-void CoolState::Operate(){};
+//void CoolState::Operate(){};
 /* ************* Emergency Heat State ************* */
