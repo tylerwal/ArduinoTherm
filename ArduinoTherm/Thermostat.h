@@ -110,7 +110,6 @@ class OffState: public IState
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
 };
-
 class FanState: public IState
 {
 	public:
@@ -119,7 +118,6 @@ class FanState: public IState
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
 };
-
 class HeatState: public IState
 {
 	public:
@@ -136,7 +134,6 @@ class CoolState: public IState
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
 };
-
 class EmergencyHeatState: public IState
 {
 	public:
