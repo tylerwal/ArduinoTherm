@@ -60,13 +60,15 @@ class IState
 		virtual void TemperatureEqualsGoal() = 0;
 		virtual void TemperatureGreaterThanGoal() = 0;
 		virtual void TemperatureLessThanGoal() = 0;
-		//virtual void Operate() = 0;
 		
 		HvacState associatedHvacState;
 };
 
-class CoolState;
+class OffState;
+class FanState;
 class HeatState;
+class CoolState;
+class EmergencyHeatState;
 
 class Thermostat : IThermostat
 {
@@ -100,6 +102,32 @@ class Thermostat : IThermostat
 		IState * getEmergencyHeatState();
 };
 
+class OffState: public IState
+{
+	public:
+		OffState(IThermostat * thermostat);
+		void TemperatureEqualsGoal();
+		void TemperatureGreaterThanGoal();
+		void TemperatureLessThanGoal();
+};
+
+class FanState: public IState
+{
+	public:
+		FanState(IThermostat * thermostat);
+		void TemperatureEqualsGoal();
+		void TemperatureGreaterThanGoal();
+		void TemperatureLessThanGoal();
+};
+
+class HeatState: public IState
+{
+	public:
+		HeatState(IThermostat * thermostat);
+		void TemperatureEqualsGoal();
+		void TemperatureGreaterThanGoal();
+		void TemperatureLessThanGoal();
+};
 class CoolState: public IState
 {
 	public:
@@ -107,51 +135,15 @@ class CoolState: public IState
 		void TemperatureEqualsGoal();
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
-		//void Operate();
-};
-
-
-class HeatState: public IState
-{
-	public:
-		void TemperatureEqualsGoal();
-		void TemperatureGreaterThanGoal();
-		void TemperatureLessThanGoal();
-};
-/*
-class OffState: public IState
-{
-	private:
-		Thermostat thermostat;
-	public:
-		OffState(Thermostat tstat)
-		{
-			thermostat = tstat;
-		}
-		void TemperatureEqualsGoal()
-		{ 
-		}
-		void TemperatureGreaterThanGoal()
-		{ 
-		}
-		void TemperatureLessThanGoal()
-		{ 
-		}
 };
 
 class EmergencyHeatState: public IState
 {
 	public:
-		void TemperatureEqualsGoal()
-		{ 
-		}
-		void TemperatureGreaterThanGoal()
-		{ 
-		}
-		void TemperatureLessThanGoal()
-		{ 
-		}
+		EmergencyHeatState(IThermostat * thermostat);
+		void TemperatureEqualsGoal();
+		void TemperatureGreaterThanGoal();
+		void TemperatureLessThanGoal();
 };
- */
  
  #endif /* EXTERNALS_H */

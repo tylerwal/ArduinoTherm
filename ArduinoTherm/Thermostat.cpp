@@ -102,15 +102,19 @@ IState * Thermostat::getEmergencyHeatState()
 
 /* ************************** Various States ************************** */
 /* ************* Off State ************* */
+
 /* ************* Fan State ************* */
+
 /* ************* Heat State ************* */
 void HeatState::TemperatureEqualsGoal(){};
 void HeatState::TemperatureGreaterThanGoal(){};
 void HeatState::TemperatureLessThanGoal(){};
+
 /* ************* Cool State ************* */
 CoolState::CoolState(IThermostat * thermostat){};
 void CoolState::TemperatureEqualsGoal(){};
 void CoolState::TemperatureGreaterThanGoal(){};
 void CoolState::TemperatureLessThanGoal(){};
 //void CoolState::Operate(){};
+
 /* ************* Emergency Heat State ************* */
