@@ -61,6 +61,8 @@ class IState
 		virtual void TemperatureGreaterThanGoal() = 0;
 		virtual void TemperatureLessThanGoal() = 0;
 		
+		virtual char* something(){ return "test"; };
+		
 		HvacState associatedHvacState;
 };
 

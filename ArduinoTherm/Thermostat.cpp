@@ -23,7 +23,8 @@ void PerformPeriodicThermostatUpdate()
 	currentTemperature = dht.toFahrenheit(dht.getTemperature());
 	
 	// ***************** Perform Thermostat Functions *****************
-	if ((goalTemperature > currentTemperature) && 
+	if (
+		(goalTemperature > currentTemperature) && 
 		!isHeatRunning && 
 		(thermostat.StateSetting == Auto || thermostat.StateSetting == Heat)
 		)
@@ -32,9 +33,12 @@ void PerformPeriodicThermostatUpdate()
 		digitalWrite(8, LOW); 
 		Serial.println("Heat Up");
 		thermostat.CurrentState = Heat;
-		thermostat.getCurrentState()->TemperatureLessThanGoal();
+		thermostat.setCurrentState(thermostat.getOffState());
+		Serial.println("Class: ");
+		Serial.print(typeof(thermostat.getCurrentState()).name()); //->TemperatureLessThanGoal();
 	}
-	else if ((goalTemperature < currentTemperature) && 
+	else if (
+		(goalTemperature < currentTemperature) && 
 		!isCoolRunning && 
 		(thermostat.StateSetting == Auto || thermostat.StateSetting == Cool)
 		)
@@ -43,6 +47,7 @@ void PerformPeriodicThermostatUpdate()
 		digitalWrite(8, HIGH);
 		Serial.println("Cool down");
 		thermostat.CurrentState = Cool;
+		thermostat.getCurrentState()->TemperatureGreaterThanGoal();
 	}
 	else
 	{
@@ -50,6 +55,7 @@ void PerformPeriodicThermostatUpdate()
 		digitalWrite(8, LOW);
 		Serial.println("Off");
 		thermostat.CurrentState = Off;
+		//thermostat.getCurrentState()->TemperatureLessThanGoal();
 	}
 }
 
@@ -87,6 +93,8 @@ void Thermostat::setCurrentState(IState * state)
 
 IState * Thermostat::getCurrentState()
 {
+	Serial.println("get current state");
+	Serial.println(currentState->something());
 	return currentState;
 };
 
@@ -115,8 +123,18 @@ IState * Thermostat::getEmergencyHeatState()
 /* ************* Off State ************* */
 OffState::OffState(IThermostat * thermostat){};
 void OffState::TemperatureEqualsGoal(){};
-void OffState::TemperatureGreaterThanGoal(){};
-void OffState::TemperatureLessThanGoal(){};
+void OffState::TemperatureGreaterThanGoal()
+{
+	//Serial.println("temp greater than goal");
+};
+void OffState::TemperatureLessThanGoal()
+{
+	//Serial.println("temp less than goal");
+};
+char* something()
+{
+	return "something in test!!!";
+};
 
 /* ************* Fan State ************* */
 FanState::FanState(IThermostat * thermostat){};
