@@ -10,6 +10,12 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StatePattern.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="StatePattern.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{062B0C05-F526-4BFB-9DEF-57591C8F7462}</ProjectGuid>
     <RootNamespace>SimpleStatePatternTest</RootNamespace>
@@ -63,12 +69,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\StatePatternTest\Thermostat.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\StatePatternTest\Thermostat.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

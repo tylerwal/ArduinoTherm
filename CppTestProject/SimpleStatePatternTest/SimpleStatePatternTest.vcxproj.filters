@@ -15,12 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\StatePatternTest\Thermostat.h">
+    <ClInclude Include="StatePattern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\StatePatternTest\Thermostat.cpp">
+    <ClCompile Include="StatePattern.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
