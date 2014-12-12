@@ -46,3 +46,11 @@ public:
 	void MethodOne();
 	void MethodTwo();
 };
+
+class StateB : public IState
+{
+public:
+	StateB(IContainer * thermostat);
+	void MethodOne();
+	void MethodTwo();
+};

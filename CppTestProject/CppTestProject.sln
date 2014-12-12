@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StatePatternTest", "StatePa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleStatePatternTest", "SimpleStatePatternTest\SimpleStatePatternTest.vcxproj", "{062B0C05-F526-4BFB-9DEF-57591C8F7462}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Polymorphism", "Polymorphism\Polymorphism.vcxproj", "{8DC94972-A00F-4458-ADC8-D1B24440959A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -27,6 +29,10 @@ Global
 		{062B0C05-F526-4BFB-9DEF-57591C8F7462}.Debug|Win32.Build.0 = Debug|Win32
 		{062B0C05-F526-4BFB-9DEF-57591C8F7462}.Release|Win32.ActiveCfg = Release|Win32
 		{062B0C05-F526-4BFB-9DEF-57591C8F7462}.Release|Win32.Build.0 = Release|Win32
+		{8DC94972-A00F-4458-ADC8-D1B24440959A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8DC94972-A00F-4458-ADC8-D1B24440959A}.Debug|Win32.Build.0 = Debug|Win32
+		{8DC94972-A00F-4458-ADC8-D1B24440959A}.Release|Win32.ActiveCfg = Release|Win32
+		{8DC94972-A00F-4458-ADC8-D1B24440959A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

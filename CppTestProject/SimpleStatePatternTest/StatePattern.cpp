@@ -15,6 +15,8 @@ void LogicFunction()
 	currentState->MethodOne();
 }
 
+/* Container */
+
 Container::Container()
 {
 	StateA state(this);
@@ -43,11 +45,26 @@ IState * Container::getStateB()
 	return stateB;
 };
 
-StateA::StateA(IContainer * container){};
+/* State A */
+
+StateA::StateA(IContainer * container)
+{
+};
 void StateA::MethodOne()
 {
-	
 };
 void StateA::MethodTwo()
+{
+};
+
+/* State B */
+
+StateB::StateB(IContainer * container)
+{
+};
+void StateB::MethodOne()
+{
+};
+void StateB::MethodTwo()
 {
 };
