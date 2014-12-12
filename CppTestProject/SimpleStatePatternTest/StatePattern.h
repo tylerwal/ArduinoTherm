@@ -15,6 +15,7 @@ public:
 class IState
 {
 public:
+	IState(){};
 	virtual void MethodOne() = 0;
 	virtual void MethodTwo() = 0;
 };

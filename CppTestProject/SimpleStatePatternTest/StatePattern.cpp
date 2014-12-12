@@ -1,18 +1,22 @@
 #include "StatePattern.h"
 #include <iostream>
 
-Container container;
+//Container container;
 
 int main()
 {
-	container.setCurrentState(container.getStateA());
+	//container.setCurrentState(container.getStateA());
 	LogicFunction();
 }
 
 void LogicFunction()
 {
+	Container container;
+	IState * stateA = container.getStateA();
+	stateA->MethodOne();
+	/*IState * stateB = container.getStateB();
 	IState * currentState = container.getCurrentState();
-	currentState->MethodOne();
+	currentState->MethodOne();*/
 }
 
 /* Container */
