@@ -16,8 +16,7 @@ class IState
 {
 public:
 	IState(){};
-	virtual void MethodOne() = 0;
-	virtual void MethodTwo() = 0;
+	virtual void Method() = 0;
 };
 
 class StateA;
@@ -44,14 +43,12 @@ class StateA : public IState
 {
 public:
 	StateA(IContainer * thermostat);
-	void MethodOne();
-	void MethodTwo();
+	void Method();
 };
 
 class StateB : public IState
 {
 public:
 	StateB(IContainer * thermostat);
-	void MethodOne();
-	void MethodTwo();
+	void Method();
 };

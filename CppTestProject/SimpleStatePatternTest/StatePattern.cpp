@@ -1,31 +1,30 @@
 #include "StatePattern.h"
 #include <iostream>
 
-//Container container;
-
 int main()
 {
-	//container.setCurrentState(container.getStateA());
 	LogicFunction();
 }
 
+Container container;
+
 void LogicFunction()
 {
-	Container container;
-	IState * stateA = container.getStateA();
-	stateA->MethodOne();
-	/*IState * stateB = container.getStateB();
-	IState * currentState = container.getCurrentState();
-	currentState->MethodOne();*/
+	//Container container;
+	IState * stateToUse = container.getStateA();
+	stateToUse->Method();
+	system("pause");
 }
 
 /* Container */
 
 Container::Container()
 {
-	StateA state(this);
-	stateA = &state;
-	
+	/*StateA state(this);
+	stateA = &state;*/
+
+	stateA = new StateA(this);
+		
 	setCurrentState(stateA);
 };
 
@@ -54,11 +53,9 @@ IState * Container::getStateB()
 StateA::StateA(IContainer * container)
 {
 };
-void StateA::MethodOne()
+void StateA::Method()
 {
-};
-void StateA::MethodTwo()
-{
+	std::cout << "State A Method";
 };
 
 /* State B */
@@ -66,9 +63,7 @@ void StateA::MethodTwo()
 StateB::StateB(IContainer * container)
 {
 };
-void StateB::MethodOne()
+void StateB::Method()
 {
-};
-void StateB::MethodTwo()
-{
+	std::cout << "State B Method";
 };
