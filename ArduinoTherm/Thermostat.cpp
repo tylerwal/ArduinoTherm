@@ -14,13 +14,13 @@ bool isCoolEnabled;
 bool isCoolRunning;
 
 Thermostat thermostat;
-IState * offState = new OffState();
-IState * autoState = new AutoState();
-IState * fanState = new FanState();
-IState * heatState = new HeatState();
-IState * coolState = new CoolState();
-IState * emergencyHeatState = new EmergencyHeatState();
-IState * autoWithEmergencyHeatState = new AutoWithEmergencyHeatState();
+IOperationalMode * offState = new OffState();
+IOperationalMode * autoState = new AutoState();
+IOperationalMode * fanState = new FanState();
+IOperationalMode * heatState = new HeatState();
+IOperationalMode * coolState = new CoolState();
+IOperationalMode * emergencyHeatState = new EmergencyHeatState();
+IOperationalMode * autoWithEmergencyHeatState = new AutoWithEmergencyHeatState();
 
 void InitiateThermostat()
 {
@@ -79,12 +79,12 @@ unsigned long Thermostat::TimeInCurrentState()
 	return millis() - this->StartTimeCurrentState;
 };
 
-void Thermostat::setCurrentState(IState * state)
+void Thermostat::setCurrentState(IOperationalMode * state)
 {
 	currentState = state;
 };
 
-IState * Thermostat::getCurrentState()
+IOperationalMode * Thermostat::getCurrentState()
 {
 	return currentState;
 };

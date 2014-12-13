@@ -40,9 +40,9 @@ enum HvacState
 	AutoWithEmergencyHeat
 };
 
-class IState;
+class IOperationalMode;
 
-class IState
+class IOperationalMode
 {
 	public:
 		virtual void TemperatureEqualsGoal() = 0;
@@ -63,7 +63,7 @@ class AutoWithEmergencyHeatState;
 class Thermostat
 {
 	private:
-		IState * currentState;
+		IOperationalMode * currentState;
 	public:	
 		unsigned long StartTimeCurrentState;
 		unsigned long TimeInCurrentState();
@@ -75,53 +75,53 @@ class Thermostat
 		HvacState CurrentState;
 	
 		Thermostat();
-		void setCurrentState(IState * state);
-		IState * getCurrentState();
+		void setCurrentState(IOperationalMode * state);
+		IOperationalMode * getCurrentState();
 };
 
-class OffState: public IState
+class OffState: public IOperationalMode
 {
 	public:
 		void TemperatureEqualsGoal();
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
 };
-class AutoState: public IState
+class AutoState: public IOperationalMode
 {
 	public:
 		void TemperatureEqualsGoal();
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
 };
-class FanState: public IState
+class FanState: public IOperationalMode
 {
 	public:
 		void TemperatureEqualsGoal();
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
 };
-class HeatState: public IState
+class HeatState: public IOperationalMode
 {
 	public:
 		void TemperatureEqualsGoal();
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
 };
-class CoolState: public IState
+class CoolState: public IOperationalMode
 {
 	public:
 		void TemperatureEqualsGoal();
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
 };
-class EmergencyHeatState: public IState
+class EmergencyHeatState: public IOperationalMode
 {
 	public:
 		void TemperatureEqualsGoal();
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
 };
-class AutoWithEmergencyHeatState: public IState
+class AutoWithEmergencyHeatState: public IOperationalMode
 {
 	public:
 		void TemperatureEqualsGoal();
