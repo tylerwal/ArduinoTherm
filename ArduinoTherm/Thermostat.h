@@ -45,25 +45,23 @@ class IOperationalMode;
 class IOperationalMode
 {
 	public:
-		virtual void TemperatureEqualsGoal() = 0;
-		virtual void TemperatureGreaterThanGoal() = 0;
-		virtual void TemperatureLessThanGoal() = 0;
+		virtual void Operate() = 0;
 				
 		HvacState associatedHvacState;
 };
 
-class OffState;
-class AutoState;
-class FanState;
-class HeatState;
-class CoolState;
-class EmergencyHeatState;
-class AutoWithEmergencyHeatState;
+class OffMode;
+class AutoMode;
+class FanMode;
+class HeatMode;
+class CoolMode;
+class EmergencyHeatMode;
+class AutoWithEmergencyHeatMode;
 
 class Thermostat
 {
 	private:
-		IOperationalMode * currentState;
+		IOperationalMode * currentMode;
 	public:	
 		unsigned long StartTimeCurrentState;
 		unsigned long TimeInCurrentState();
@@ -75,58 +73,44 @@ class Thermostat
 		HvacState CurrentState;
 	
 		Thermostat();
-		void setCurrentState(IOperationalMode * state);
-		IOperationalMode * getCurrentState();
+		void setCurrentMode(IOperationalMode * mode);
+		IOperationalMode * getCurrentMode();
 };
 
-class OffState: public IOperationalMode
+class OffMode: public IOperationalMode
 {
 	public:
-		void TemperatureEqualsGoal();
-		void TemperatureGreaterThanGoal();
-		void TemperatureLessThanGoal();
+		void Operate();
 };
-class AutoState: public IOperationalMode
+class AutoMode: public IOperationalMode
 {
 	public:
-		void TemperatureEqualsGoal();
-		void TemperatureGreaterThanGoal();
-		void TemperatureLessThanGoal();
+		void Operate();
 };
-class FanState: public IOperationalMode
+class FanMode: public IOperationalMode
 {
 	public:
-		void TemperatureEqualsGoal();
-		void TemperatureGreaterThanGoal();
-		void TemperatureLessThanGoal();
+		void Operate();
 };
-class HeatState: public IOperationalMode
+class HeatMode: public IOperationalMode
 {
 	public:
-		void TemperatureEqualsGoal();
-		void TemperatureGreaterThanGoal();
-		void TemperatureLessThanGoal();
+		void Operate();
 };
-class CoolState: public IOperationalMode
+class CoolMode: public IOperationalMode
 {
 	public:
-		void TemperatureEqualsGoal();
-		void TemperatureGreaterThanGoal();
-		void TemperatureLessThanGoal();
+		void Operate();
 };
-class EmergencyHeatState: public IOperationalMode
+class EmergencyHeatMode: public IOperationalMode
 {
 	public:
-		void TemperatureEqualsGoal();
-		void TemperatureGreaterThanGoal();
-		void TemperatureLessThanGoal();
+		void Operate();
 };
-class AutoWithEmergencyHeatState: public IOperationalMode
+class AutoWithEmergencyHeatMode: public IOperationalMode
 {
 	public:
-		void TemperatureEqualsGoal();
-		void TemperatureGreaterThanGoal();
-		void TemperatureLessThanGoal();
+		void Operate();
 };
  
  #endif /* EXTERNALS_H */

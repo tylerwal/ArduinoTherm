@@ -14,18 +14,18 @@ bool isCoolEnabled;
 bool isCoolRunning;
 
 Thermostat thermostat;
-IOperationalMode * offState = new OffState();
-IOperationalMode * autoState = new AutoState();
-IOperationalMode * fanState = new FanState();
-IOperationalMode * heatState = new HeatState();
-IOperationalMode * coolState = new CoolState();
-IOperationalMode * emergencyHeatState = new EmergencyHeatState();
-IOperationalMode * autoWithEmergencyHeatState = new AutoWithEmergencyHeatState();
+IOperationalMode * offMode = new OffMode();
+IOperationalMode * autoMode = new AutoMode();
+IOperationalMode * fanMode = new FanMode();
+IOperationalMode * heatMode = new HeatMode();
+IOperationalMode * coolMode = new CoolMode();
+IOperationalMode * emergencyHeatMode = new EmergencyHeatMode();
+IOperationalMode * autoWithEmergencyHeatMode = new AutoWithEmergencyHeatMode();
 
 void InitiateThermostat()
 {
 	thermostat.StartTimeCurrentState = millis();
-	thermostat.setCurrentState(autoState);
+	thermostat.setCurrentMode(autoMode);
 }
 
 void PerformPeriodicThermostatUpdate()
@@ -35,12 +35,12 @@ void PerformPeriodicThermostatUpdate()
 	currentHumidity = dht.getHumidity();
 	currentTemperature = dht.toFahrenheit(dht.getTemperature());
 	
-	// ***************** Perform Thermostat Functions *****************
+	/* // ***************** Perform Thermostat Functions *****************
 	if (
 		(
 			goalTemperature > currentTemperature) && 
 			!isHeatRunning && 
-			(thermostat.StateSetting == Auto || thermostat.StateSetting == Heat)
+			(thermostat.ModeSetting == Auto || thermostat.ModeSetting == Heat)
 		)
 	{
 		digitalWrite(9, HIGH);
@@ -52,12 +52,13 @@ void PerformPeriodicThermostatUpdate()
 		(
 			(goalTemperature < currentTemperature) && 
 			!isCoolRunning && 
-			(thermostat.StateSetting == Auto || thermostat.StateSetting == Cool)
+			(thermostat.ModeSetting == Auto || thermostat.ModeSetting == Cool)
 		)
 	{
 		digitalWrite(9, LOW); 
 		digitalWrite(8, HIGH);
 		Serial.println("Cool down");
+		thermostat.CurrentState = Cool;
 	}
 	else
 	{
@@ -65,13 +66,13 @@ void PerformPeriodicThermostatUpdate()
 		digitalWrite(8, LOW);
 		Serial.println("Off");
 		thermostat.CurrentState = Off;
-	}
+	} */
 }
 
 /* ************* Thermostat ************* */
 Thermostat::Thermostat()
 {
-	//setCurrentState(offState);
+	//setCurrentMode(offMode);
 }; 
 
 unsigned long Thermostat::TimeInCurrentState()
@@ -79,54 +80,34 @@ unsigned long Thermostat::TimeInCurrentState()
 	return millis() - this->StartTimeCurrentState;
 };
 
-void Thermostat::setCurrentState(IOperationalMode * state)
+void Thermostat::setCurrentMode(IOperationalMode * mode)
 {
-	currentState = state;
+	currentMode = mode;
 };
 
-IOperationalMode * Thermostat::getCurrentState()
+IOperationalMode * Thermostat::getCurrentMode()
 {
-	return currentState;
+	return currentMode;
 };
 
-/* ************************** Various States ************************** */
-/* ************* Off State ************* */
-void OffState::TemperatureEqualsGoal(){};
-void OffState::TemperatureGreaterThanGoal()
-{
-	Serial.println("temp greater than goal");
-};
-void OffState::TemperatureLessThanGoal()
-{
-	Serial.println("temp less than goal");
-};
+/* ************************** Various Modes ************************** */
+/* ************* Off Mode ************* */
+void OffMode::Operate(){};
 
-/* ************* Auto State ************* */
-void AutoState::TemperatureEqualsGoal(){};
-void AutoState::TemperatureGreaterThanGoal(){};
-void AutoState::TemperatureLessThanGoal(){};
+/* ************* Auto Mode ************* */
+void AutoMode::Operate(){};
 
-/* ************* Fan State ************* */
-void FanState::TemperatureEqualsGoal(){};
-void FanState::TemperatureGreaterThanGoal(){};
-void FanState::TemperatureLessThanGoal(){};
+/* ************* Fan Mode ************* */
+void FanMode::Operate(){};
 
-/* ************* Heat State ************* */
-void HeatState::TemperatureEqualsGoal(){};
-void HeatState::TemperatureGreaterThanGoal(){};
-void HeatState::TemperatureLessThanGoal(){};
+/* ************* Heat Mode ************* */
+void HeatMode::Operate(){};
 
-/* ************* Cool State ************* */
-void CoolState::TemperatureEqualsGoal(){};
-void CoolState::TemperatureGreaterThanGoal(){};
-void CoolState::TemperatureLessThanGoal(){};
+/* ************* Cool Mode ************* */
+void CoolMode::Operate(){};
 
-/* ************* Emergency Heat State ************* */
-void EmergencyHeatState::TemperatureEqualsGoal(){};
-void EmergencyHeatState::TemperatureGreaterThanGoal(){};
-void EmergencyHeatState::TemperatureLessThanGoal(){};
+/* ************* Emergency Heat Mode ************* */
+void EmergencyHeatMode::Operate(){};
 
-/* ************* AutoWithEmergency Heat State ************* */
-void AutoWithEmergencyHeatState::TemperatureEqualsGoal(){};
-void AutoWithEmergencyHeatState::TemperatureGreaterThanGoal(){};
-void AutoWithEmergencyHeatState::TemperatureLessThanGoal(){};
+/* ************* AutoWithEmergency Heat Mode ************* */
+void AutoWithEmergencyHeatMode::Operate(){};
