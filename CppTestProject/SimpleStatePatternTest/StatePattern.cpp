@@ -13,6 +13,9 @@ void LogicFunction()
 	//Container container;
 	IState * stateToUse = container.getStateA();
 	stateToUse->Method();
+	delete stateToUse;
+	//stateToUse = container.getStateA();
+	//stateToUse->Method(); // this will throw an exception because the memory was deallocated
 	system("pause");
 }
 
@@ -20,9 +23,6 @@ void LogicFunction()
 
 Container::Container()
 {
-	/*StateA state(this);
-	stateA = &state;*/
-
 	stateA = new StateA(this);
 		
 	setCurrentState(stateA);
