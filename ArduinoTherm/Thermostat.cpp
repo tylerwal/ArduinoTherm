@@ -24,6 +24,14 @@ IOperationalMode * autoWithEmergencyHeatMode = new AutoWithEmergencyHeatMode();
 
 void InitiateThermostat()
 {
+	offMode->associatedHvacState = Off;
+	autoMode->associatedHvacState = Auto;
+	fanMode->associatedHvacState = Fan;
+	heatMode->associatedHvacState = Heat;
+	coolMode->associatedHvacState = Cool;
+	emergencyHeatMode->associatedHvacState = EmergencyHeat;
+	autoWithEmergencyHeatMode->associatedHvacState = AutoWithEmergencyHeat;
+	
 	thermostat.StartTimeCurrentState = millis();
 	thermostat.setCurrentMode(autoMode);
 }
@@ -34,6 +42,8 @@ void PerformPeriodicThermostatUpdate()
 	dhtStatus = dht.getStatusString();
 	currentHumidity = dht.getHumidity();
 	currentTemperature = dht.toFahrenheit(dht.getTemperature());
+	
+	thermostat.getCurrentMode()->Operate();
 	
 	/* // ***************** Perform Thermostat Functions *****************
 	if (
@@ -92,10 +102,22 @@ IOperationalMode * Thermostat::getCurrentMode()
 
 /* ************************** Various Modes ************************** */
 /* ************* Off Mode ************* */
-void OffMode::Operate(){};
+void OffMode::Operate()
+{
+	digitalWrite(9, LOW); 
+	digitalWrite(8, LOW);
+	Serial.println("Off");
+	thermostat.CurrentState = Off;
+};
 
 /* ************* Auto Mode ************* */
-void AutoMode::Operate(){};
+void AutoMode::Operate()
+{
+	digitalWrite(9, HIGH); 
+	digitalWrite(8, HIGH);
+	Serial.println("Auto");
+	thermostat.CurrentState = Auto;
+};
 
 /* ************* Fan Mode ************* */
 void FanMode::Operate(){};
