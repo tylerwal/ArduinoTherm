@@ -26,6 +26,8 @@ Container::Container()
 	stateA = new StateA(this);
 		
 	setCurrentState(stateA);
+
+	/*setCurrentState(new StateA(this));*/ // this does not work
 };
 
 void Container::setCurrentState(IState * state)

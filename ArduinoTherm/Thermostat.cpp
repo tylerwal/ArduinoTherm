@@ -24,29 +24,31 @@ void PerformPeriodicThermostatUpdate()
 	
 	// ***************** Perform Thermostat Functions *****************
 	if (
-		(goalTemperature > currentTemperature) && 
-		!isHeatRunning && 
-		(thermostat.StateSetting == Auto || thermostat.StateSetting == Heat)
+		(
+			goalTemperature > currentTemperature) && 
+			!isHeatRunning && 
+			(thermostat.StateSetting == Auto || thermostat.StateSetting == Heat)
 		)
 	{
 		digitalWrite(9, HIGH);
 		digitalWrite(8, LOW); 
 		Serial.println("Heat Up");
 		thermostat.CurrentState = Heat;
-		thermostat.setCurrentState(thermostat.getOffState());
-		Serial.println("Class: ");
-		Serial.print(typeof(thermostat.getCurrentState()).name()); //->TemperatureLessThanGoal();
+		//thermostat.setCurrentState(thermostat.getOffState());
+		//Serial.println("Class: ");
+		thermostat.getCurrentState()->TemperatureLessThanGoal();
 	}
-	else if (
-		(goalTemperature < currentTemperature) && 
-		!isCoolRunning && 
-		(thermostat.StateSetting == Auto || thermostat.StateSetting == Cool)
+	else if 
+		(
+			(goalTemperature < currentTemperature) && 
+			!isCoolRunning && 
+			(thermostat.StateSetting == Auto || thermostat.StateSetting == Cool)
 		)
 	{
 		digitalWrite(9, LOW); 
 		digitalWrite(8, HIGH);
 		Serial.println("Cool down");
-		thermostat.CurrentState = Cool;
+		//thermostat.CurrentState = Cool;
 		thermostat.getCurrentState()->TemperatureGreaterThanGoal();
 	}
 	else
@@ -63,20 +65,11 @@ void PerformPeriodicThermostatUpdate()
 
 Thermostat::Thermostat()
 {
-	OffState ostate(this);
-	offState = &ostate;
-	
-	FanState fstate(this);
-	fanState = &fstate;
-	
-	HeatState hstate(this);
-	heatState = &hstate;
-	
-	CoolState cstate(this);
-	coolState = &cstate;
-	
-	EmergencyHeatState ehstate(this);
-	emergencyHeatState = &ehstate;
+	offState = new OffState(this);	
+	fanState = new FanState(this);	
+	heatState = new HeatState(this);	
+	coolState = new CoolState(this);	
+	emergencyHeatState = new EmergencyHeatState(this);
 	
 	setCurrentState(offState);
 }; 
@@ -93,8 +86,6 @@ void Thermostat::setCurrentState(IState * state)
 
 IState * Thermostat::getCurrentState()
 {
-	Serial.println("get current state");
-	Serial.println(currentState->something());
 	return currentState;
 };
 
@@ -125,15 +116,11 @@ OffState::OffState(IThermostat * thermostat){};
 void OffState::TemperatureEqualsGoal(){};
 void OffState::TemperatureGreaterThanGoal()
 {
-	//Serial.println("temp greater than goal");
+	Serial.println("temp greater than goal");
 };
 void OffState::TemperatureLessThanGoal()
 {
-	//Serial.println("temp less than goal");
-};
-char* something()
-{
-	return "something in test!!!";
+	Serial.println("temp less than goal");
 };
 
 /* ************* Fan State ************* */
