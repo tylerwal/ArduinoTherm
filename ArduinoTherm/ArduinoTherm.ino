@@ -32,7 +32,6 @@ EthernetClient client;
 
 void setup()
 {
-  
 	Ethernet.begin(mac, ip);
 
 	server.begin();
@@ -46,7 +45,8 @@ void setup()
 	// DHT-22 needs a delay before first read
 	delay(1000);
 
-	thermostat.StartTimeCurrentState = millis();
+	InitiateThermostat();
+	/* thermostat.StartTimeCurrentState = millis(); */
 	/* thermostat.CurrentState = Off; */
 	thermostat.StateSetting = Auto;
 

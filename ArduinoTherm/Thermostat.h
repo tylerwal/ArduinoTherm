@@ -26,6 +26,7 @@ extern bool isCoolEnabled;
 extern bool isCoolRunning; */
 /* extern Thermostat thermostat; */
 
+void InitiateThermostat();
 void PerformPeriodicThermostatUpdate();
 
 enum HvacState 
@@ -41,19 +42,6 @@ enum HvacState
 
 class IState;
 
-class IThermostat
-{
-	public:
-		virtual void setCurrentState(IState * state) = 0;
-		virtual IState * getCurrentState() = 0;
-		
-		virtual IState * getOffState() = 0;
-		virtual IState * getFanState() = 0;
-		virtual IState * getHeatState() = 0;
-		virtual IState * getCoolState() = 0;
-		virtual IState * getEmergencyHeatState() = 0;
-};
-
 class IState
 {
 	public:
@@ -65,24 +53,18 @@ class IState
 };
 
 class OffState;
+class AutoState;
 class FanState;
 class HeatState;
 class CoolState;
 class EmergencyHeatState;
+class AutoWithEmergencyHeatState;
 
-class Thermostat : IThermostat
+class Thermostat
 {
 	private:
 		IState * currentState;
-
-		IState * offState;
-		IState * fanState;
-		IState * heatState;
-		IState * coolState;
-		IState * emergencyHeatState;
-	public:
-		Thermostat(); //IState * cool);
-	
+	public:	
 		unsigned long StartTimeCurrentState;
 		unsigned long TimeInCurrentState();
 
@@ -92,20 +74,21 @@ class Thermostat : IThermostat
 		// ******************** current state ********************
 		HvacState CurrentState;
 	
+		Thermostat();
 		void setCurrentState(IState * state);
 		IState * getCurrentState();
-		
-		IState * getOffState();
-		IState * getFanState();
-		IState * getHeatState();
-		IState * getCoolState();
-		IState * getEmergencyHeatState();
 };
 
 class OffState: public IState
 {
 	public:
-		OffState(IThermostat * thermostat);
+		void TemperatureEqualsGoal();
+		void TemperatureGreaterThanGoal();
+		void TemperatureLessThanGoal();
+};
+class AutoState: public IState
+{
+	public:
 		void TemperatureEqualsGoal();
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
@@ -113,7 +96,6 @@ class OffState: public IState
 class FanState: public IState
 {
 	public:
-		FanState(IThermostat * thermostat);
 		void TemperatureEqualsGoal();
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
@@ -121,7 +103,6 @@ class FanState: public IState
 class HeatState: public IState
 {
 	public:
-		HeatState(IThermostat * thermostat);
 		void TemperatureEqualsGoal();
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
@@ -129,7 +110,6 @@ class HeatState: public IState
 class CoolState: public IState
 {
 	public:
-		CoolState(IThermostat * thermostat);
 		void TemperatureEqualsGoal();
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
@@ -137,7 +117,13 @@ class CoolState: public IState
 class EmergencyHeatState: public IState
 {
 	public:
-		EmergencyHeatState(IThermostat * thermostat);
+		void TemperatureEqualsGoal();
+		void TemperatureGreaterThanGoal();
+		void TemperatureLessThanGoal();
+};
+class AutoWithEmergencyHeatState: public IState
+{
+	public:
 		void TemperatureEqualsGoal();
 		void TemperatureGreaterThanGoal();
 		void TemperatureLessThanGoal();
