@@ -18,13 +18,6 @@ extern DHT dht;
 #define temperatureHysteresis 2 // the amount above or below a threshold that is allowed
 #define minRunTime 420000 // cooling minimum runtime allowed (prevent short cycles)
 #define minOffTime 420000 // cooling minimum off time before can run again (protect compressor)
-/* extern bool isFanEnabled;
-extern bool isFanRunning;
-extern bool isHeatEnabled;
-extern bool isHeatRunning;
-extern bool isCoolEnabled;
-extern bool isCoolRunning; */
-/* extern Thermostat thermostat; */
 
 void InitiateThermostat();
 void PerformPeriodicThermostatUpdate();
@@ -65,6 +58,12 @@ class Thermostat
 	public:	
 		unsigned long StartTimeCurrentState;
 		unsigned long TimeInCurrentState();
+		
+		void StartCool();
+		void StartHeat();
+		void StartEmergencyHeat();
+		void StartFan();
+		void StopAll();
 
 		// ******************** desired state ********************
 		HvacState StateSetting;
@@ -72,7 +71,7 @@ class Thermostat
 		// ******************** current state ********************
 		HvacState CurrentState;
 	
-		Thermostat();
+		/* Thermostat(); */
 		void setCurrentMode(IOperationalMode * mode);
 		IOperationalMode * getCurrentMode();
 };

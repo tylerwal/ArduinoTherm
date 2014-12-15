@@ -1,17 +1,15 @@
 #include "Arduino.h"
 #include "Thermostat.h"
 
+#define HeatOutputPin 9
+#define CoolOutputPin 8
+#define FanOutputPin 7
+#define EmergencyHeatOutputPin 6
+
 float currentTemperature;
 float goalTemperature;
 float currentHumidity;
 const char* dhtStatus;
-
-bool isFanEnabled;
-bool isFanRunning;
-bool isHeatEnabled;
-bool isHeatRunning;
-bool isCoolEnabled;
-bool isCoolRunning;
 
 Thermostat thermostat;
 IOperationalMode * offMode = new OffMode();
@@ -33,6 +31,7 @@ void InitiateThermostat()
 	autoWithEmergencyHeatMode->associatedHvacState = AutoWithEmergencyHeat;
 	
 	thermostat.StartTimeCurrentState = millis();
+	
 	thermostat.setCurrentMode(autoMode);
 }
 
@@ -53,8 +52,8 @@ void PerformPeriodicThermostatUpdate()
 			(thermostat.ModeSetting == Auto || thermostat.ModeSetting == Heat)
 		)
 	{
-		digitalWrite(9, HIGH);
-		digitalWrite(8, LOW); 
+		digitalWrite(HeatOutputPin, HIGH);
+		digitalWrite(CoolOutputPin, LOW); 
 		Serial.println("Heat Up");
 		thermostat.CurrentState = Heat;
 	}
@@ -65,25 +64,19 @@ void PerformPeriodicThermostatUpdate()
 			(thermostat.ModeSetting == Auto || thermostat.ModeSetting == Cool)
 		)
 	{
-		digitalWrite(9, LOW); 
-		digitalWrite(8, HIGH);
+		digitalWrite(HeatOutputPin, LOW); 
+		digitalWrite(CoolOutputPin, HIGH);
 		Serial.println("Cool down");
 		thermostat.CurrentState = Cool;
 	}
 	else
 	{
-		digitalWrite(9, LOW); 
-		digitalWrite(8, LOW);
+		digitalWrite(HeatOutputPin, LOW); 
+		digitalWrite(CoolOutputPin, LOW);
 		Serial.println("Off");
 		thermostat.CurrentState = Off;
 	} */
 }
-
-/* ************* Thermostat ************* */
-Thermostat::Thermostat()
-{
-	//setCurrentMode(offMode);
-}; 
 
 unsigned long Thermostat::TimeInCurrentState()
 {
@@ -100,36 +93,69 @@ IOperationalMode * Thermostat::getCurrentMode()
 	return currentMode;
 };
 
+void Thermostat::StartCool()
+{
+};
+void Thermostat::StartHeat()
+{
+};
+void Thermostat::StartEmergencyHeat()
+{
+};
+void Thermostat::StartFan()
+{
+};
+void Thermostat::StopAll()
+{
+	digitalWrite(HeatOutputPin, LOW); 
+	digitalWrite(CoolOutputPin, LOW);
+	digitalWrite(FanOutputPin, LOW);
+	digitalWrite(EmergencyHeatOutputPin, LOW);
+	Serial.println("Off");
+	thermostat.CurrentState = Off;
+};
+
 /* ************************** Various Modes ************************** */
 /* ************* Off Mode ************* */
 void OffMode::Operate()
 {
-	digitalWrite(9, LOW); 
-	digitalWrite(8, LOW);
-	Serial.println("Off");
-	thermostat.CurrentState = Off;
+	thermostat.StopAll();
 };
 
 /* ************* Auto Mode ************* */
 void AutoMode::Operate()
 {
-	digitalWrite(9, HIGH); 
-	digitalWrite(8, HIGH);
+	digitalWrite(HeatOutputPin, HIGH); 
+	digitalWrite(CoolOutputPin, HIGH);
 	Serial.println("Auto");
 	thermostat.CurrentState = Auto;
 };
 
 /* ************* Fan Mode ************* */
-void FanMode::Operate(){};
+void FanMode::Operate()
+{
+	digitalWrite(HeatOutputPin, HIGH); 
+	digitalWrite(CoolOutputPin, HIGH);
+	Serial.println("Auto");
+	thermostat.CurrentState = Auto;
+};
 
 /* ************* Heat Mode ************* */
-void HeatMode::Operate(){};
+void HeatMode::Operate()
+{
+};
 
 /* ************* Cool Mode ************* */
-void CoolMode::Operate(){};
+void CoolMode::Operate()
+{
+};
 
 /* ************* Emergency Heat Mode ************* */
-void EmergencyHeatMode::Operate(){};
+void EmergencyHeatMode::Operate()
+{
+};
 
 /* ************* AutoWithEmergency Heat Mode ************* */
-void AutoWithEmergencyHeatMode::Operate(){};
+void AutoWithEmergencyHeatMode::Operate()
+{
+};

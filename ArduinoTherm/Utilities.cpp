@@ -19,6 +19,14 @@ char* FloatToString(float input)
 	return buffer;
 }
 
+void StartPin(int pinNumber)
+{
+}
+
+void StopPin(int pinNumber)
+{
+}
+
 // code @ https://learn.adafruit.com/memories-of-an-arduino/measuring-free-memory
 int freeRam()
 {

@@ -6,7 +6,7 @@
 #include "HttpServer.h"
 
 // ************ Temp/Humidity Probe **************
-#define DhtUpdateInterval 3000000 // how often the temp probe's values are used to update global variables
+#define ThermostatUpdateInterval 3000000 // how often the temp probe's values are used to update global variables
 DHT dht;
 extern float currentTemperature;
 extern float goalTemperature;
@@ -33,7 +33,7 @@ EthernetClient client;
 void setup()
 {
 	Ethernet.begin(mac, ip);
-
+	
 	server.begin();
 	
 	Serial.begin(9600);
@@ -52,7 +52,7 @@ void setup()
 
 	goalTemperature = 72.0; // set a default in case there is a restart
 	
-	Timer1.initialize(DhtUpdateInterval);
+	Timer1.initialize(ThermostatUpdateInterval);
 	Timer1.attachInterrupt(PerformPeriodicThermostatUpdate);
 
 	pinMode(8, OUTPUT);

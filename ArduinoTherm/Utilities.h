@@ -11,6 +11,10 @@ bool CompareStrings(const char* one, const char* two);
 
 char* FloatToString(float input);
 
+void StartPin(int pinNumber);
+
+void StopPin(int pinNumber);
+
 int freeRam();
 
 #endif /* UTILITIES_H */
