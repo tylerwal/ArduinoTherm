@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "Thermostat.h"
+#include "Utilities.h"
 
 #define HeatOutputPin 9
 #define CoolOutputPin 8
@@ -119,14 +120,17 @@ void Thermostat::StopAll()
 /* ************* Off Mode ************* */
 void OffMode::Operate()
 {
-	thermostat.StopAll();
+	if (thermostat.CurrentState != Off)
+	{
+		thermostat.StopAll();
+	}
 };
 
 /* ************* Auto Mode ************* */
 void AutoMode::Operate()
 {
-	digitalWrite(HeatOutputPin, HIGH); 
-	digitalWrite(CoolOutputPin, HIGH);
+	StartPin(HeatOutputPin); 
+	StartPin(CoolOutputPin);
 	Serial.println("Auto");
 	thermostat.CurrentState = Auto;
 };
@@ -134,25 +138,37 @@ void AutoMode::Operate()
 /* ************* Fan Mode ************* */
 void FanMode::Operate()
 {
-	digitalWrite(HeatOutputPin, HIGH); 
-	digitalWrite(CoolOutputPin, HIGH);
-	Serial.println("Auto");
-	thermostat.CurrentState = Auto;
+	StartPin(HeatOutputPin); 
+	StartPin(CoolOutputPin);
+	Serial.println("Fan");
+	thermostat.CurrentState = Fan;
 };
 
 /* ************* Heat Mode ************* */
 void HeatMode::Operate()
 {
+	StartPin(HeatOutputPin); 
+	StopPin(CoolOutputPin);
+	Serial.println("Fan");
+	thermostat.CurrentState = Fan;
 };
 
 /* ************* Cool Mode ************* */
 void CoolMode::Operate()
 {
+	StopPin(HeatOutputPin); 
+	StartPin(CoolOutputPin);
+	Serial.println("Fan");
+	thermostat.CurrentState = Fan;
 };
 
 /* ************* Emergency Heat Mode ************* */
 void EmergencyHeatMode::Operate()
 {
+	StartPin(HeatOutputPin); 
+	StopPin(CoolOutputPin);
+	Serial.println("Fan");
+	thermostat.CurrentState = Fan;
 };
 
 /* ************* AutoWithEmergency Heat Mode ************* */

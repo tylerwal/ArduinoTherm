@@ -21,10 +21,12 @@ char* FloatToString(float input)
 
 void StartPin(int pinNumber)
 {
+	digitalWrite(pinNumber, HIGH);
 }
 
 void StopPin(int pinNumber)
 {
+	digitalWrite(pinNumber, LOW);
 }
 
 // code @ https://learn.adafruit.com/memories-of-an-arduino/measuring-free-memory
