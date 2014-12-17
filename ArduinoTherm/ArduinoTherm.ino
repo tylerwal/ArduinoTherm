@@ -14,14 +14,6 @@ extern float currentHumidity;
 extern const char* dhtStatus;
 
 // ************ Thermostat ************
-/* 
-bool isFanEnabled;
-bool isFanRunning;
-bool isHeatEnabled; 
-*/
-extern bool isHeatRunning;
-/* bool isCoolEnabled; */
-extern bool isCoolRunning;
 extern Thermostat thermostat;
 
 // ************ Client/Server ************
