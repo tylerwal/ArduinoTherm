@@ -138,8 +138,8 @@ void AutoMode::Operate()
 /* ************* Fan Mode ************* */
 void FanMode::Operate()
 {
-	StartPin(HeatOutputPin); 
-	StartPin(CoolOutputPin);
+	StopPin(HeatOutputPin); 
+	StopPin(CoolOutputPin);
 	Serial.println("Fan");
 	thermostat.CurrentState = Fan;
 };
